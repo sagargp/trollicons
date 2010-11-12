@@ -394,6 +394,16 @@
 			<key>Name</key>
 			<string>Sweaty</string>
 		</dict>
+		<key>friends.png</key>
+		<dict>
+			<key>Equivalents</key>
+			<array>
+				<string>[friends]</string>
+				<string>[yay]</string>
+			</array>
+			<key>Name</key>
+			<string>Friends!</string>
+		</dict>
 	</dict>
 </dict>
 </plist>

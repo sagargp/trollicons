@@ -4,7 +4,7 @@ PLATFORM=`uname`
 
 function adium {
 	cp -r Icons/ trollicons.AdiumEmoticonset
-	zip trollicons.zip trollicons.AdiumEmoticonset > /dev/null
+	zip -r trollicons.zip trollicons.AdiumEmoticonset/ > /dev/null
 
 	echo "Adium iconset created at trollicons.zip."
 }
@@ -65,5 +65,6 @@ else
 	echo "install_pidgin-Install the Pidgin pack into ~/.purple/smileys"
 	echo "all-Equivalent to running with 'adium' and 'pidgin'"
 	echo "install-Runs 'install_adium' or 'install_pidgin' depending on your OS"
+	echo "dist-Creates the Pidgin and Adium icon packs. Run this before committing."
 	echo "clean-Delete all interim files") | column -t -s-
 fi

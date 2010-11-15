@@ -1,0 +1,17 @@
+Author: Sagar Pandya (sagargp@gmail.com)
+
+This is the git repository for the Trollicons emoticon set
+(http://www.reddit.com/r/fffffffuuuuuuuuuuuu/comments/dw8ix/adiumpidgin_trollicon_set_contains_over_9000_icons/)
+
+To checkout:
+git clone https://sagargp@github.com/sagargp/trollicons.git
+
+Add/remove/modify the iconset as you see
+fit, then use build.sh to create new icon
+packs for Adium/Pidgin.
+
+To install on OSX, double click the trollicons
+emoticon pack or run "build.sh install_adium"
+
+To install on Linux, untar trollicons.tar.gz into
+~/.purple/smileys or run "build.sh install_pidgin"

@@ -18,7 +18,7 @@ function pidgin {
 }
 
 function install_adium {
-	cp -r trollicons.AdiumEmoticonset/ ~/Library/Application\ Support/Adium\ 2.0/Emoticons/
+	cp -r trollicons.AdiumEmoticonset ~/Library/Application\ Support/Adium\ 2.0/Emoticons/
 	echo "Installed in Lirary/Application Support/Adium 2.0/Emoticons/"
 	echo "You will need to restart Adium"
 }
@@ -45,6 +45,11 @@ function clean {
 	echo -n "Cleaning..."
 	rm -rf trollicons.AdiumEmoticonset/ trollicons/ trollicons.zip trollicons.tar.gz
 	echo "done"
+}
+
+function dist {
+	all;
+	rm -rf trollicons.AdiumEmoticonset/ trollicons/
 }
 
 if [[ $1 ]]; then

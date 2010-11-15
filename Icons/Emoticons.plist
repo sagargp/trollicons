@@ -16,6 +16,27 @@
 			<key>Name</key>
 			<string>Hmm</string>
 		</dict>
+		<key>disgusted.png</key>
+		<dict>
+			<key>Equivalents</key>
+			<array>
+				<string>[gross]</string>
+				<string>[disgusted]</string>
+				<string>[wtf]</string>
+			</array>
+			<key>Name</key>
+			<string>Hmm</string>
+		</dict>
+		<key>aintthatsomeshit.png</key>
+		<dict>
+			<key>Equivalents</key>
+			<array>
+				<string>[celo]</string>
+				<string>[aintthatsomeshit]</string>
+			</array>
+			<key>Name</key>
+			<string>Ain&apos;t that some shit?</string>
+		</dict>
 		<key>Determined.png</key>
 		<dict>
 			<key>Equivalents</key>

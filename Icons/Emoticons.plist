@@ -16,6 +16,15 @@
 			<key>Name</key>
 			<string>Hmm</string>
 		</dict>
+		<key>YUNO.png</key>
+		<dict>
+			<key>Equivalents</key>
+			<array>
+				<string>[yuno]</string>
+			</array>
+			<key>Name</key>
+			<string>Y U NO?!?</string>
+		</dict>
 		<key>disgusted.png</key>
 		<dict>
 			<key>Equivalents</key>
@@ -396,6 +405,24 @@
 				<string>[megusta]</string>
 			</array>
 		</dict>
+		<key>ChallengeAccepted.png</key>
+		<dict>
+			<key>Equivalents</key>
+			<array>
+				<string>[challenge]</string>
+			</array>
+			<key>Name</key>
+			<string>Challenge accepted</string>
+		</dict>
+		<key>Gasp.png</key>
+		<dict>
+			<key>Equivalents</key>
+			<array>
+				<string>[gasp]</string>
+			</array>
+			<key>Name</key>
+			<string>Gasp!</string>
+		</dict>
 		<key>okay.png</key>
 		<dict>
 			<key>Equivalents</key>
@@ -423,6 +450,35 @@
 			</array>
 			<key>Name</key>
 			<string>Sweaty</string>
+		</dict>
+		<key>RetardDog.png</key>
+		<dict>
+			<key>Equivalents</key>
+			<array>
+				<string>[wetodddog]</string>
+				<string>[keys]</string>
+			</array>
+			<key>Name</key>
+			<string>Retard dog</string>
+		</dict>
+		<key>IamDisappointed.png</key>
+		<dict>
+			<key>Equivalents</key>
+			<array>
+				<string>[son]</string>
+				<string>[disappoint]</string>
+			</array>
+			<key>Name</key>
+			<string>I am disappoint</string>
+		</dict>
+		<key>HerpDerp.png</key>
+		<dict>
+			<key>Equivalents</key>
+			<array>
+				<string>[herp]</string>
+			</array>
+			<key>Name</key>
+			<string>Herp</string>
 		</dict>
 	</dict>
 </dict>

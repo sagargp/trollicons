@@ -19,7 +19,7 @@ function pidgin {
 
 function install_adium {
 	cp -r trollicons.AdiumEmoticonset ~/Library/Application\ Support/Adium\ 2.0/Emoticons/
-	echo "Installed in Lirary/Application Support/Adium 2.0/Emoticons/"
+	echo "Installed in ~/Library/Application Support/Adium 2.0/Emoticons/"
 	echo "You will need to restart Adium"
 }
 

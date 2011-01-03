@@ -16,6 +16,24 @@
 			<key>Name</key>
 			<string>No</string>
 		</dict>
+		<key>melvin.png</key>
+		<dict>
+			<key>Equivalents</key>
+			<array>
+				<string>[melvin]</string>
+			</array>
+			<key>Name</key>
+			<string>Melvin</string>
+		</dict>
+		<key>sadmelvin.png</key>
+		<dict>
+			<key>Equivalents</key>
+			<array>
+				<string>[sadmelvin]</string>
+			</array>
+			<key>Name</key>
+			<string>Sad Melvin</string>
+		</dict>
 		<key>Thoughtful.png</key>
 		<dict>
 			<key>Equivalents</key>

@@ -4,7 +4,7 @@ PLATFORM=`uname`
 
 function adium {
 	cp -r Icons/ trollicons.AdiumEmoticonset
-	zip -r trollicons.zip trollicons.AdiumEmoticonset/ > /dev/null
+	zip -r trollicons-osx.zip trollicons.AdiumEmoticonset/ > /dev/null
 
 	echo "Adium iconset created at trollicons.zip."
 }
@@ -12,38 +12,39 @@ function adium {
 function pidgin {
 	cp -r Icons/ trollicons
 	python adium2pidgin.py trollicons.AdiumEmoticonset > trollicons/theme
-	tar -czf trollicons.tar.gz trollicons/
-
-	echo "Pidgin iconset created at trollicons.tar.gz."
+	tar -czf trollicons-linux.tar.gz trollicons/
+	zip -r trollicons-windows.zip trollicons/
+	
+	echo "Pidgin iconset created at trollicons-linux.tar.gz and trollicons-windows.zip"
 }
 
-function install_adium {
-	cp -r trollicons.AdiumEmoticonset ~/Library/Application\ Support/Adium\ 2.0/Emoticons/
-	echo "Installed in ~/Library/Application Support/Adium 2.0/Emoticons/"
-	echo "You will need to restart Adium"
-}
-
-function install_pidgin {
-	tar -xf trollicons.tar.gz -C ~/.purple/smileys/
-	echo "Installed at ~/.purple/smileys"
-}
+#function install_adium {
+#	cp -r trollicons.AdiumEmoticonset ~/Library/Application\ Support/Adium\ 2.0/Emoticons/
+#	echo "Installed in ~/Library/Application Support/Adium 2.0/Emoticons/"
+#	echo "You will need to restart Adium"
+#}
+#
+#function install_pidgin {
+#	tar -xf trollicons.tar.gz -C ~/.purple/smileys/
+#	echo "Installed at ~/.purple/smileys"
+#}
+#
+#function install {
+#	if [[ "$PLATFORM" == "Linux" ]]; then
+#		install_pidgin;
+#	elif [[ "$PLATFORM" == "Darwin" ]]; then
+#		install_adium;
+#	fi
+#}
 
 function all {
 	adium;
 	pidgin;
 }
 
-function install {
-	if [[ "$PLATFORM" == "Linux" ]]; then
-		install_pidgin;
-	elif [[ "$PLATFORM" == "Darwin" ]]; then
-		install_adium;
-	fi
-}
-
 function clean {
 	echo -n "Cleaning..."
-	rm -rf trollicons.AdiumEmoticonset/ trollicons/ trollicons.zip trollicons.tar.gz
+	rm -rf trollicons.AdiumEmoticonset/ trollicons/ trollicons-adium.zip trollicons-linux.tar.gz trollicons-windows.zip
 	echo "done"
 }
 

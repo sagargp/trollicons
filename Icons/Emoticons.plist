@@ -614,6 +614,7 @@
 		<dict>
 			<key>Equivalents</key>
 			<array>
+ 			     <string>[spit]</string>
 				<string>[cerealspit]</string>
 			</array>
 			<key>Name</key>

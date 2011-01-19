@@ -44,7 +44,7 @@ function all {
 
 function clean {
 	echo -n "Cleaning..."
-	rm -rf trollicons.AdiumEmoticonset/ trollicons/ trollicons-adium.zip trollicons-linux.tar.gz trollicons-windows.zip
+	rm -rf trollicons.AdiumEmoticonset/ trollicons/ trollicons-osx.zip trollicons-linux.tar.gz trollicons-windows.zip
 	echo "done"
 }
 

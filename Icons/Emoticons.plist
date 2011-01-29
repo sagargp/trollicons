@@ -16,6 +16,25 @@
 			<key>Name</key>
 			<string>No</string>
 		</dict>
+		<key>staredad.png</key>
+		<dict>
+			<key>Equivalents</key>
+			<array>
+				<string>[stare]</string>
+				<string>[staredad]</string>
+			</array>
+			<key>Name</key>
+			<string>Stare dad</string>
+		</dict>
+		<key>LOLnotext.png</key>
+		<dict>
+			<key>Equivalents</key>
+			<array>
+				<string>[ooo]</string>
+			</array>
+			<key>Name</key>
+			<string>LOL -- no text</string>
+		</dict>
 		<key>High.png</key>
 		<dict>
 			<key>Equivalents</key>

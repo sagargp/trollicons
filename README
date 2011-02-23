@@ -10,8 +10,8 @@ Add/remove/modify the iconset as you see
 fit, then use build.sh to create new icon
 packs for Adium/Pidgin.
 
-To install on OSX, double click the trollicons
-emoticon pack or run "build.sh install_adium"
+To install on OSX, unzip trollicons-osx.zip and
+double click the trollicons emoticon pack.
 
 To install on Linux, untar trollicons.tar.gz into
-~/.purple/smileys or run "build.sh install_pidgin"
+~/.purple/smileys

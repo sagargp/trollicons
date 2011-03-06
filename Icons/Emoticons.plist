@@ -676,6 +676,67 @@
 			<key>Name</key>
 			<string>Newspaper - Tear</string>
 		</dict>
+		<key>What.png</key>
+		<dict>
+			<key>Equivalents</key>
+			<array>
+				<string>[what]</string>
+				<string>[what?]</string>
+			</array>
+			<key>Name</key>
+			<string>What?</string>
+		</dict>
+		<key>gwhat.png</key>
+		<dict>
+			<key>Equivalents</key>
+			<array>
+				<string>[gwhat]</string>
+				<string>[gwhat?]</string>
+			</array>
+			<key>Name</key>
+			<string>What - Girl</string>
+		</dict>
+		<key>trolldadjump.png</key>
+		<dict>
+			<key>Equivalents</key>
+			<array>
+				<string>[trolldadjump]</string>
+				<string>[jumptrolldad]</string>
+			</array>
+			<key>Name</key>
+			<string>Jumping Trolldad</string>
+		</dict>
+		<key>drunk.png</key>
+		<dict>
+			<key>Equivalents</key>
+			<array>
+				<string>[drunk]</string>
+			</array>
+			<key>Name</key>
+			<string>Drunk</string>
+		</dict>
+		<key>gropaga.png</key>
+		<dict>
+			<key>Equivalents</key>
+			<array>
+				<string>[gropaga]</string>
+			</array>
+			<key>Name</key>
+			<string>Gropaga</string>
+		</dict>
+		<key>dbag.png</key>
+		<dict>
+			<key>Equivalents</key>
+			<array>
+				<string>[dbag]</string>
+				<string>[douche]</string>
+				<string>[brah]</string>			
+				<string>[douchebag]</string>	
+			</array>
+			<key>Name</key>
+			<string>Douchebag</string>
+		</dict>
+		
 	</dict>
 </dict>
 </plist>

@@ -3,9 +3,13 @@ Author: Sagar Pandya (sagargp@gmail.com)
 This is the git repository for the Trollicons emoticon set
 (http://www.reddit.com/r/fffffffuuuuuuuuuuuu/comments/e6gxg/updated_adiumpidgin_iconset_and_now_hosting_on/)
 
-To checkout:
+Installation:
+Click Downloads to grab the latest version from github.
+
+To checkout source:
 git clone https://sagargp@github.com/sagargp/trollicons.git
 
+Building:
 Add/remove/modify the iconset as you see
 fit, then use build.sh to create new icon
 packs for Adium/Pidgin.

@@ -11,11 +11,15 @@ git clone https://sagargp@github.com/sagargp/trollicons.git
 
 Building:
 Add/remove/modify the iconset as you see
-fit, then use build.sh to create new icon
+fit, then use the rakefile to create new icon
 packs for Adium/Pidgin.
 
-To install on OSX, unzip trollicons-osx.zip and
-double click the trollicons emoticon pack.
+You may need to install rake.
+	(sudo) gem install rake builder
+	
+Then type `rake -T` to see available tasks.  
 
-To install on Linux, untar trollicons.tar.gz into
+To install on OSX, double click the trollicons emoticon pack.
+
+To install on Linux, unzip trollicons.zip into
 ~/.purple/smileys

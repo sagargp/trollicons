@@ -13,12 +13,16 @@ end
 
 desc "Cleans out the build directory"
 task :clean do
-  rm_rf "build/*"
+  rm_rf "build"
 end
 
 desc "Packages all folders in build/ for distribution"
 task :dist do
-  n = Pathname.new('./build').children.select{|f| f.extname != '.zip' and f.directory? }.each{|d| sh "zip -r build/#{d.basename}.zip build/#{d.basename}" }
+  n = Pathname.new('./build').children.select{|f| f.extname != '.zip' and f.directory? }.each do |d| 
+    Dir.chdir('./build/') do 
+      sh "zip -r #{d.basename}.zip #{d.basename}"
+    end
+  end
   if n.count > 0
     puts "Done, built #{n.count} packages".green
   else
@@ -51,6 +55,10 @@ task :build_adium do
           #extract the face name, now the rest will contain aliases
           name = aliases.shift
           
+          if f.to_s =~ /^Icons\/(.*)\/(.*)$/
+            name = "#{$1} - #{name}"
+          end
+                  
           b.key f.basename
           b.dict{
             b.key "Equivalents"
@@ -58,7 +66,7 @@ task :build_adium do
               aliases.each {|a| b.string "[#{a}]" }
             }
             b.key "Name"
-            b.string name
+            b.string name              
           }
         end
       }
@@ -69,8 +77,8 @@ task :build_adium do
   rm_rf "build/trollicons.AdiumEmoticonset"
   
   #Write to file
-  mkdir_p "build"
-  cp_r "Icons", "build/trollicons.AdiumEmoticonset"
+  mkdir_p "build/trollicons.AdiumEmoticonset"
+  files.each{|f| cp f.to_s, 'build/trollicons.AdiumEmoticonset/'}
   Pathname.new('./build/trollicons.AdiumEmoticonset/Emoticons.plist').open('w'){|io| io << markup}
 end
 
@@ -91,30 +99,43 @@ task :build_pidgin do
 
   iconStr += "Name=Trollicons\n"
   iconStr += "Description=An iconset made out of rage faces from reddit.com's F7U12 sub\n"
-  iconStr += "Icon=SoMuchWin.png\n"
+  iconStr += "Icon=So Much Win-win-yey.png\n"
   iconStr += "Author=Sagar Pandya\n\n"
   iconStr += "[default]\n";
   
-  get_files.each do |f|
+  files = get_files.each do |f|
     aliases = f.basename.to_s.chomp(f.extname).split("-")
     #extract the face name, now the rest will contain aliases
     name = aliases.shift
+    
+    if f.to_s =~ /^Icons\/(.*)\/(.*)$/
+      name = "#{$1} - #{name}"
+    end
     
     iconStr += "#{name} #{aliases.collect{|a| "[#{a}]"}.join(' ')}\n"
   end
   
   #Write
-  cp_r "Icons", "build/trollicons-pidgin"
+  mkdir_p "build/trollicons-pidgin"
+  files.each{|f| cp f.to_s, 'build/trollicons-pidgin/'}
   Pathname.new('build/trollicons-pidgin/theme').open('w'){|io| io << iconStr}
 end
 
-def get_files
+def get_files(directory='Icons')
   puts "Scanning Icon directory"
-  files = Pathname.new('./Icons').children.select{|f| f.extname == '.png' }
+  files = []
+  Pathname.new(directory).each_child do |f|
+    if f.directory? # WE NEED TO GO DEEPER
+      files = files | Pathname.new(f).children.select{|f| f.extname == '.png' } # Merge arrays
+    else
+      files << f if f.extname == '.png'
+    end
+  end
   unless files.count
     puts "No files found"
     return []
   end
+  puts "Processing #{files.count} files.".green
   files
 end
 

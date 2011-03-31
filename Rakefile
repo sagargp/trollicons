@@ -112,8 +112,8 @@ task :build_digsby do
     end
   end
   
-  D.dump_icons_to_folder('digsby')
-  Pathname.new('build/digsby/emoticons.txt').open('w'){|io| io << list}
+  D.dump_icons_to_folder('trollicons-digsby')
+  Pathname.new('build/trollicons-digsby/emoticons.txt').open('w'){|io| io << list}
 end
 
 desc "Builds for Miranda"
@@ -130,8 +130,8 @@ task :build_miranda do
     string += "Smiley = \"#{r.cleanpath}\", 0, \"#{r.aliases.collect{|a| "[#{a}]"}.join(' ')}\n\""
   end
   
-  M.dump_icons_to_folder('miranda')
-  Pathname.new('build/miranda/Trollicons.msl').open('w'){|io| io << string}
+  M.dump_icons_to_folder('trollicons-miranda')
+  Pathname.new('build/trollicons-miranda/Trollicons.msl').open('w'){|io| io << string}
 end
 
 class RIcons

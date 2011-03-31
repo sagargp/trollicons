@@ -1,6 +1,7 @@
 # Maintainer: Chris https://github.com/unregistered
 require 'pathname'
-require 'pry'
+#require 'pry'
+#require 'RMagick'
 
 task :default => [:help]
 
@@ -31,7 +32,7 @@ task :dist do
 end
 
 desc "Builds all packages we have support for."
-task :all => [:build_adium, :build_pidgin, :build_digsby]
+task :all => [:build_adium, :build_pidgin, :build_digsby, :build_miranda]
 
 desc "Builds for Adium on OSX"
 task :build_adium do
@@ -87,7 +88,7 @@ task :build_pidgin do
 
   iconStr += "Name=Trollicons\n"
   iconStr += "Description=An iconset made out of rage faces from reddit.com's F7U12 sub\n"
-  iconStr += "Icon=So Much Win-win-yey.png\n"
+  iconStr += "Icon=Happy-SoMuchWin.png\n"
   iconStr += "Author=Sagar Pandya\n\n"
   iconStr += "[default]\n";
   
@@ -103,7 +104,6 @@ end
 desc "Builds for Digsby"
 task :build_digsby do
   puts "\nBuilding for Adium".bold
-  puts "Untested... any volunteers?".red
   
   list = "trollicons\n"
   D = RIcons.new.each_emoticon do |r|
@@ -114,6 +114,24 @@ task :build_digsby do
   
   D.dump_icons_to_folder('digsby')
   Pathname.new('build/digsby/emoticons.txt').open('w'){|io| io << list}
+end
+
+desc "Builds for Miranda"
+task :build_miranda do
+  puts "\nBuilding for Miranda".bold
+  
+  string = "Name=Trollicons\n"
+  string += "Description=This is the trollicons pack for Miranda. Find it on github.\n"
+  string += "Icon=Happy-SoMuchWin.png\n"
+  string += "Author=sagargp\n\n"
+  string += "[default]\n"
+  
+  M = RIcons.new.each_emoticon do |r|
+    string += "Smiley = \"#{r.cleanpath}\", 0, \"#{r.aliases.collect{|a| "[#{a}]"}.join(' ')}\n\""
+  end
+  
+  M.dump_icons_to_folder('miranda')
+  Pathname.new('build/miranda/Trollicons.msl').open('w'){|io| io << string}
 end
 
 class RIcons
@@ -139,6 +157,11 @@ class RIcons
       return []
     end
     puts "Processing #{files.count} files.".green
+    
+    # Process the Trollicons version file
+    v = files.index(Pathname.new("Icons/Trollicons-trollicons.png"))
+    files[v].name = " Trollicons (#{files.count} icons) (build date: #{Time.now.month}-#{Time.now.day}-#{Time.now.year})"   
+    
     files
   end
   
@@ -151,7 +174,15 @@ class RIcons
   
   def dump_icons_to_folder(folder)
     #Check for name collisions
-    #TODO
+    seen = []
+    files.each do |f|
+      unless seen.find_index(f.cleanpath)  
+        seen << f.cleanpath
+      else
+        puts "Found a naming collision with #{f.cleanpath}. Please resolve it.".red
+        return
+      end
+    end
     
     #Clean old stuff
     rm_rf "build/#{folder}"

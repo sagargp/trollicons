@@ -145,7 +145,7 @@ class RIcons
   def get_files(directory="Icons")
     puts "Scanning Icon directory"
     files = []
-    Pathname.new(directory).each_child do |f|
+    Pathname.new(directory).children.each do |f|
       if f.directory? # WE NEED TO GO DEEPER
         files = files | Pathname.new(f).children.select{|f| f.extname == '.png' }.map{|f| RIcon.new(f).init } # Merge arrays
       else

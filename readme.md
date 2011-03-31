@@ -1,6 +1,6 @@
 # Trollicons
 
-__Rage Icons for Adium and Pidgin.__
+__Rage Icons for Adium, Pidgin, Digsby, and Miranda. (Trillian coming soon)__
 
 ## A Graphical Overview
 ![Overview](http://i.imgur.com/gY1il.png)

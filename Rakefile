@@ -1,6 +1,6 @@
-# Maintainer: Chris https://github.com/unregistered
+# Maintainer: Chris -- https://github.com/unregistered
 require 'pathname'
-#require 'pry'
+require 'pry'
 #require 'RMagick'
 
 task :default => [:help]
@@ -32,7 +32,7 @@ task :dist do
 end
 
 desc "Builds all packages we have support for."
-task :all => [:build_adium, :build_pidgin, :build_digsby, :build_miranda]
+task :all => [:build_adium, :build_pidgin, :build_digsby, :build_miranda, :build_trillian]
 
 desc "Builds for Adium on OSX"
 task :build_adium do
@@ -132,6 +132,58 @@ task :build_miranda do
   
   M.dump_icons_to_folder('trollicons-miranda')
   Pathname.new('build/trollicons-miranda/Trollicons.msl').open('w'){|io| io << string}
+end
+
+desc "Builds for Trillian"
+task :build_trillian do
+  require 'RMagick'
+  require 'builder'
+  
+  puts "\nBuilding for Trillian".bold
+  T = RIcons.new
+    
+  #Adium uses an XML file
+  b = Builder::XmlMarkup.new(:target=>(markup=String.new), :indent=>2)
+  b.comment! "Auto-generated. Run rake build_trillian. github.com/sagargp/trollicons"
+  T.each_emoticon do |r|
+    b.bitmap :name => r.name, :file => "../../stixe/plugins/trollicons-trillian/icons/#{r.cleanpath}"
+  end
+  
+  b.prefs{
+    b.control :name => "emoticons", :type => "emoticons" do
+      #<group text="&wordBasicSmileys;" initial="1">
+  		b.group :text => '&wordBasicSmileys;'.to_sym, :initial => 1 do
+  		  
+        T.each_emoticon do |r|
+          r.aliases.each_with_index do |a, i|
+            # Get image size
+            image = Magick::Image.read( r.to_s ).first
+
+            b.emoticon :text => "[#{a.to_s}]", :button => (i==0 ? "yes" : "") do
+              b.source :name => r.name, :left => "0", :right => "#{image.columns}", :top => "", :bottom => "#{image.rows+10}"
+            end
+          end
+        end
+      
+      end
+      
+      # Some required stuff
+    	b << "&Emoticon-Extensions;\n"
+    	b << "&iniMenuItemColor;\n"
+    	b << "&iniIconMenuItemSettings;\n"
+    	b.font :name => "selection", :source => 'ttfDefault', :type => '&iniDefaultFontName;'.to_sym, :size => '&iniDefaultFontSize;'.to_sym
+    end
+  }
+  
+  # It also uses a desc.txt file
+  string = "Trollicons emoticon set built on #{Time.now}\nemot"
+  
+  T.dump_icons_to_folder('trollicons-trillian/icons')
+  #binding.pry
+  cp T.files.select{|f| f.aliases.include? 'trollicons'}.first.to_s, "build/trollicons-trillian/emoticon.png" # Header image
+  cp T.files.select{|f| f.aliases.include? 'win'}.first.to_s, "build/trollicons-trillian/preview.png" # Header image
+  Pathname.new('./build/trollicons-trillian/main.xml').open('w'){|io| io << markup}
+  Pathname.new('./build/trollicons-trillian/desc.txt').open('w'){|io| io << string}
 end
 
 class RIcons

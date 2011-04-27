@@ -1,6 +1,6 @@
 # Trollicons
 
-__Rage Icons for Adium, Pidgin, Digsby, and Miranda. (Trillian coming soon)__
+__Rage Icons for Adium, Pidgin, Digsby, Miranda, and Trillian__
 
 ## A Graphical Overview
 ![Overview](http://i.imgur.com/gY1il.png)
@@ -19,6 +19,10 @@ To install, double click the trollicons emoticon pack.
 To install on Linux, unzip trollicons.zip into
 ~/.purple/smileys
 
+### Trillian
+Unzip the icons into `C:\Program Files\Trillian\stixe\plugins\`
+Enable the icon pack in the Trillian preferences, under Skins.
+
 ## Building
 ### To checkout source:
 	git clone git://github.com/sagargp/trollicons.git
@@ -26,7 +30,7 @@ To install on Linux, unzip trollicons.zip into
 ### Using Rake:
 You may have to install rake.
 
-	(sudo) gem install rake builder
+	(sudo) gem install rake builder pry
 	
 If that doesn't work you may have to install ruby, which is out of this readme's scope.
 	

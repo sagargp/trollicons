@@ -160,7 +160,7 @@ task :build_trillian do
             image = Magick::Image.read( r.to_s ).first
 
             b.emoticon :text => "[#{a.to_s}]", :button => (i==0 ? "yes" : "") do
-              b.source :name => r.name, :left => "0", :right => "#{image.columns}", :top => "", :bottom => "#{image.rows+10}"
+              b.source :name => r.name, :left => "0", :right => "#{image.columns}", :top => "0", :bottom => "#{image.rows+10}"
             end
           end
         end

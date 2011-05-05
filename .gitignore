@@ -2,3 +2,4 @@ trollicons.AdiumEmoticonset
 build/*
 *~
 *.DS_store
+.svn

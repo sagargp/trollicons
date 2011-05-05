@@ -1,6 +1,6 @@
 # Maintainer: Chris -- https://github.com/unregistered
 require 'pathname'
-require 'pry'
+#require 'pry'
 #require 'RMagick'
 
 task :default => [:help]

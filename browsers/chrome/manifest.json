@@ -4,6 +4,6 @@
 	"description": "Parses trollicons in Google Chat and Facebook Chat",
 	"content_scripts": [ {
 		"matches": ["http://*/*", "https://*/*"],
-		"js": ["jquery.js", "trollicons.js"]
+		"js": ["jquery.js", "mappings.js", "trollicons.js"]
 	}]
 }

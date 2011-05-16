@@ -3,7 +3,7 @@
 	"version": "1.0",
 	"description": "Parses trollicons in Google Chat and Facebook Chat",
 	"content_scripts": [ {
-		"matches": ["http://*/*", "https://*/*"],
+		"matches": ["*://mail.google.com/*", "*://*.facebook.com/*"],
 		"js": ["jquery.js", "mappings.js", "trollicons.js"]
 	}]
 }

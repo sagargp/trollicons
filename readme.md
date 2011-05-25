@@ -12,16 +12,35 @@ __Rage Icons for Adium, Pidgin, Digsby, Miranda, and Trillian__
 ## Installation
 Click Downloads to grab the latest version from github.
 
-### Adium
-To install, double click the trollicons emoticon pack.
+### Adium (OS X)
+Double click to unzip. Then, double click the trollicons emoticon pack to install.
 
-### Pidgin
+### Pidgin (Linux, Windows)
+
+#### Linux
 To install on Linux, unzip trollicons.zip into
-~/.purple/smileys
+`~/.purple/smileys`
 
-### Trillian
-Unzip the icons into `C:\Program Files\Trillian\stixe\plugins\`
-Enable the icon pack in the Trillian preferences, under Skins.
+#### Windows
+To install on Windows, unzip trollicons.zip into `.purple/smileys`
+
+The location of this folder varies by version of Windows:
+
+* For Windows 2000/XP/Vista/7, entering `%APPDATA%` in your Windows Explorer address bar will take you to the right directory
+* On Windows XP, it will be something like `C:\Documents and Settings\username\Application Data`
+* On Windows Vista/7, it will be something like `C:\Users\username\AppData\Roaming\`
+* For Windows 98/ME it will be something like `C:\Windows\Profiles\username`
+
+For more details see [pidgin's site](http://developer.pidgin.im/wiki/SmileyThemes)
+
+### Trillian (Windows)
+Unzip the icons into `C:\Program Files\Trillian\stixe\plugins\` and enable the icon pack in the Trillian preferences, under Skins.
+
+### Miranda (Windows)
+See [Miranda's wiki](http://wiki.miranda-im.org/Smileys).
+
+### Digsby (Windows)
+Delete or rename `C:\Program Files\Digsby\res\emoticons\default` and unzip trollicons into `C:\Program Files\Digsby\res\emoticons\`
 
 ## Building
 ### To checkout source:

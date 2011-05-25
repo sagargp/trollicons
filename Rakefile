@@ -31,6 +31,29 @@ task :dist do
   end
 end
 
+desc "Deploys all archives to github"
+task :deploy do
+  require 'net/github-upload'
+  
+  login = `git config github.user`.chomp  # your login for github
+  token = `git config github.token`.chomp # your token for github
+  repos = 'sagargp/trollicons'            # your repos name (like 'taberareloo')
+  gh = Net::GitHub::Upload.new(
+    :login => login,
+    :token => token
+  )
+  
+  gh.delete_all repos
+  
+  Pathname.new('./build').each_child.select{|c| c.extname == '.zip'}.each do |f|
+    gh.upload(
+      :repos => repos,
+      :file => f.to_s,
+      :description => "#{f.basename} - Auto-uploaded from Rake. See Readme for which file to download."
+    )
+  end
+end
+
 desc "Builds all packages we have support for."
 task :all => [:build_adium, :build_pidgin, :build_digsby, :build_miranda, :build_trillian]
 

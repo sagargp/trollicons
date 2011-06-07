@@ -210,6 +210,7 @@ task :build_trillian do
 end
 
 class RIcons
+	include Rake::DSL
   attr_accessor :files
   
   def initialize
@@ -256,6 +257,15 @@ class RIcons
       else
         puts "Found a naming collision with #{f.cleanpath}. Please resolve it.".red
         return
+      end
+    end
+    
+    # Check for alias collisions
+    c = Hash.new(0)
+    files.each do |f|
+      f.aliases.each do |a|
+        c[a] += 1
+        puts "Alias collision on #{a} in #{f}".red if c[a] > 1
       end
     end
     

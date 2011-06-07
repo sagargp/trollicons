@@ -3,7 +3,7 @@
 __Rage Icons for Adium, Pidgin, Digsby, Miranda, and Trillian__
 
 ## A Graphical Overview
-![Overview](http://i.imgur.com/VPpzm.png)
+![Overview](http://i.imgur.com/LntRv.png)
 
 ## Authors
 * Sagar Pandya [sagargp@gmail.com](mailto:sagargp@gmail.com)

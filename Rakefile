@@ -210,7 +210,10 @@ task :build_trillian do
 end
 
 class RIcons
-	include Rake::DSL
+  begin
+	  include Rake::DSL
+	rescue Exception
+  end
   attr_accessor :files
   
   def initialize

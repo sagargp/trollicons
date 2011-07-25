@@ -32,7 +32,7 @@ task :dist do
 end
 
 desc "Deploys all archives to github"
-task :deploy do
+task :deploy => [:clean, :all, :dist] do
   require 'net/github-upload'
   
   login = `git config github.user`.chomp  # your login for github

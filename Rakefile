@@ -22,6 +22,7 @@ namespace :install do
   desc "Installs for adium on Mac OS X"
   task :adium do
     `open build/trollicons.AdiumEmoticonset`
+    puts "Restart Adium".red
   end
 end
 

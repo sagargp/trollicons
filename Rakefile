@@ -15,6 +15,197 @@ task :clean do
   rm_rf "build"
 end
 
+desc "Alias for build:all"
+task :all => ['build:all']
+
+namespace :install do
+  desc "Installs for adium on Mac OS X"
+  task :adium do
+    `open build/trollicons.AdiumEmoticonset`
+  end
+end
+
+namespace :build do
+  desc "Builds all packages we have support for."
+  task :all => [:adium, :pidgin, :digsby, :miranda, :trillian]
+
+  desc "Builds for Adium on OSX"
+  task :adium do
+    require 'builder'
+  
+    puts "\nBuilding for Adium".bold
+    A = RIcons.new
+    
+    #Adium uses an XML file
+    b = Builder::XmlMarkup.new(:target=>(markup=String.new), :indent=>2)
+    b.comment! "Auto-generated. Run rake build:adium."
+    b.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8"
+    b.declare! :DOCTYPE, :plist, :PUBLIC, "-//Apple//DTD PLIST 1.0//EN", "http://www.apple.com/DTDs/PropertyList-1.0.dtd"
+    b.plist "version"=>"1.0" do
+      b.dict{
+        b.key "AdiumSetVersion"
+        b.real "1.3"
+        b.key "Emoticons"
+        b.dict{
+          A.each_emoticon do |r|
+                            
+            b.key r.cleanpath
+            b.dict{
+              b.key "Equivalents"
+              b.array{
+                r.aliases.each {|a| b.string "[#{a}]" }
+              }
+              b.key "Name"
+              b.string r.name              
+            }
+          
+          end
+        }
+      }
+    end
+  
+    A.dump_icons_to_folder('trollicons.AdiumEmoticonset')
+    Pathname.new('./build/trollicons.AdiumEmoticonset/Emoticons.plist').open('w'){|io| io << markup}
+  end
+
+  desc "Builds for Pidgin"
+  task :pidgin do
+    puts "\nBuilding for Pidgin".bold
+  
+    #Create markup, from adium2pidgin.py
+    iconStr  = "#################################################\n"
+    iconStr += "## Auto-generated, run rake build:pidgin       ##\n"
+    iconStr += "#  Created by Sagar Pandya (sagargp@gmail.com)  #\n"
+    iconStr += "#  www.reddit.com/user/sagarp                   #\n"
+    iconStr += "#  www.reddit.com/r/fffffffuuuuuuuuuuuu         #\n"
+    iconStr += "##  See https://github.com/sagargp/trollicons  ##\n"
+    iconStr += "#################################################\n"
+
+    iconStr += "Name=Trollicons\n"
+    iconStr += "Description=An iconset made out of rage faces from reddit.com's F7U12 sub\n"
+    iconStr += "Icon=Happy-SoMuchWin.png\n"
+    iconStr += "Author=Sagar Pandya\n\n"
+    iconStr += "[default]\n";
+  
+    P = RIcons.new.each_emoticon do |r|
+      iconStr += "#{r.cleanpath} #{r.aliases.collect{|a| "[#{a}]"}.join(' ')}\n"
+    end
+  
+    #Write
+    P.dump_icons_to_folder('trollicons-pidgin')
+    Pathname.new('build/trollicons-pidgin/theme').open('w'){|io| io << iconStr}
+  end
+
+  desc "Builds for Digsby"
+  task :digsby do
+    puts "\nBuilding for Adium".bold
+  
+    list = "trollicons\n"
+    D = RIcons.new.each_emoticon do |r|
+      r.aliases.each do |a|
+        list += "#{r.cleanpath} [#{a}]\n"
+      end
+    end
+  
+    D.dump_icons_to_folder('trollicons-digsby')
+    Pathname.new('build/trollicons-digsby/emoticons.txt').open('w'){|io| io << list}
+  end
+
+  desc "Builds for Miranda"
+  task :miranda do
+    puts "\nBuilding for Miranda".bold
+  
+    string = "Name=Trollicons\n"
+    string += "Description=This is the trollicons pack for Miranda. Find it on github.\n"
+    string += "Icon=Happy-SoMuchWin.png\n"
+    string += "Author=sagargp\n\n"
+    string += "[default]\n"
+  
+    M = RIcons.new.each_emoticon do |r|
+      string += "Smiley = \"#{r.cleanpath}\", 0, \"#{r.aliases.collect{|a| "[#{a}]"}.join(' ')}\n\""
+    end
+  
+    M.dump_icons_to_folder('trollicons-miranda')
+    Pathname.new('build/trollicons-miranda/Trollicons.msl').open('w'){|io| io << string}
+  end
+
+  desc "Builds for Trillian"
+  task :trillian do
+    require 'RMagick'
+    require 'builder'
+  
+    puts "\nBuilding for Trillian".bold
+    T = RIcons.new
+    
+    #Adium uses an XML file
+    b = Builder::XmlMarkup.new(:target=>(markup=String.new), :indent=>2)
+    b.comment! "Auto-generated. Run rake build:trillian. github.com/sagargp/trollicons"
+    T.each_emoticon do |r|
+      b.bitmap :name => r.name, :file => "../../stixe/plugins/trollicons-trillian/icons/#{r.cleanpath}"
+    end
+  
+    b.prefs{
+      b.control :name => "emoticons", :type => "emoticons" do
+        #<group text="&wordBasicSmileys;" initial="1">
+    		b.group :text => '&wordBasicSmileys;'.to_sym, :initial => 1 do
+  		  
+          T.each_emoticon do |r|
+            r.aliases.each_with_index do |a, i|
+              # Get image size
+              image = Magick::Image.read( r.to_s ).first
+
+              b.emoticon :text => "[#{a.to_s}]", :button => (i==0 ? "yes" : "") do
+                b.source :name => r.name, :left => "0", :right => "#{image.columns}", :top => "0", :bottom => "#{image.rows+10}"
+              end
+            end
+          end
+      
+        end
+      
+        # Some required stuff
+      	b << "&Emoticon-Extensions;\n"
+      	b << "&iniMenuItemColor;\n"
+      	b << "&iniIconMenuItemSettings;\n"
+      	b.font :name => "selection", :source => 'ttfDefault', :type => '&iniDefaultFontName;'.to_sym, :size => '&iniDefaultFontSize;'.to_sym
+      end
+    }
+  
+    # It also uses a desc.txt file
+    string = "Trollicons emoticon set built on #{Time.now}\nemot"
+  
+    T.dump_icons_to_folder('trollicons-trillian/icons')
+    #binding.pry
+    cp T.files.select{|f| f.aliases.include? 'trollicons'}.first.to_s, "build/trollicons-trillian/emoticon.png" # Header image
+    cp T.files.select{|f| f.aliases.include? 'win'}.first.to_s, "build/trollicons-trillian/preview.png" # Header image
+    Pathname.new('./build/trollicons-trillian/main.xml').open('w'){|io| io << markup}
+    Pathname.new('./build/trollicons-trillian/desc.txt').open('w'){|io| io << string}
+  end
+end
+
+desc "Deploys all archives to github"
+task :deploy => [:clean, 'build:all', :dist] do
+  require 'net/github-upload'
+
+  login = `git config github.user`.chomp  # your login for github
+  token = `git config github.token`.chomp # your token for github
+  repos = 'sagargp/trollicons'            # your repos name (like 'taberareloo')
+  gh = Net::GitHub::Upload.new(
+    :login => login,
+    :token => token
+  )
+
+  gh.delete_all repos
+
+  Pathname.new('./build').each_child.select{|c| c.extname == '.zip'}.each do |f|
+    puts "Uploading #{f.to_s} to github"
+    gh.upload(
+      :repos => repos,
+      :file => f.to_s,
+      :description => "#{f.basename} - Auto-uploaded from Rake. See Readme for which file to download."
+    )
+  end
+end
+
 desc "Packages all folders in build/ for distribution"
 task :dist do
   mkdir_p 'build'
@@ -29,184 +220,6 @@ task :dist do
     puts "No packages found. Perhaps you'd like to build some?".red
     Rake::Task["help"].execute
   end
-end
-
-desc "Deploys all archives to github"
-task :deploy => [:clean, :all, :dist] do
-  require 'net/github-upload'
-  
-  login = `git config github.user`.chomp  # your login for github
-  token = `git config github.token`.chomp # your token for github
-  repos = 'sagargp/trollicons'            # your repos name (like 'taberareloo')
-  gh = Net::GitHub::Upload.new(
-    :login => login,
-    :token => token
-  )
-  
-  gh.delete_all repos
-  
-  Pathname.new('./build').each_child.select{|c| c.extname == '.zip'}.each do |f|
-    gh.upload(
-      :repos => repos,
-      :file => f.to_s,
-      :description => "#{f.basename} - Auto-uploaded from Rake. See Readme for which file to download."
-    )
-  end
-end
-
-desc "Builds all packages we have support for."
-task :all => [:build_adium, :build_pidgin, :build_digsby, :build_miranda, :build_trillian]
-
-desc "Builds for Adium on OSX"
-task :build_adium do
-  require 'builder'
-  
-  puts "\nBuilding for Adium".bold
-  A = RIcons.new
-    
-  #Adium uses an XML file
-  b = Builder::XmlMarkup.new(:target=>(markup=String.new), :indent=>2)
-  b.comment! "Auto-generated. Run rake build_adium."
-  b.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8"
-  b.declare! :DOCTYPE, :plist, :PUBLIC, "-//Apple//DTD PLIST 1.0//EN", "http://www.apple.com/DTDs/PropertyList-1.0.dtd"
-  b.plist "version"=>"1.0" do
-    b.dict{
-      b.key "AdiumSetVersion"
-      b.real "1.3"
-      b.key "Emoticons"
-      b.dict{
-        A.each_emoticon do |r|
-                            
-          b.key r.cleanpath
-          b.dict{
-            b.key "Equivalents"
-            b.array{
-              r.aliases.each {|a| b.string "[#{a}]" }
-            }
-            b.key "Name"
-            b.string r.name              
-          }
-          
-        end
-      }
-    }
-  end
-  
-  A.dump_icons_to_folder('trollicons.AdiumEmoticonset')
-  Pathname.new('./build/trollicons.AdiumEmoticonset/Emoticons.plist').open('w'){|io| io << markup}
-end
-
-desc "Builds for Pidgin"
-task :build_pidgin do
-  puts "\nBuilding for Pidgin".bold
-  
-  #Create markup, from adium2pidgin.py
-  iconStr  = "#################################################\n"
-  iconStr += "## Auto-generated, run rake build_pidgin       ##\n"
-  iconStr += "#  Created by Sagar Pandya (sagargp@gmail.com)  #\n"
-  iconStr += "#  www.reddit.com/user/sagarp                   #\n"
-  iconStr += "#  www.reddit.com/r/fffffffuuuuuuuuuuuu         #\n"
-  iconStr += "##  See https://github.com/sagargp/trollicons  ##\n"
-  iconStr += "#################################################\n"
-
-  iconStr += "Name=Trollicons\n"
-  iconStr += "Description=An iconset made out of rage faces from reddit.com's F7U12 sub\n"
-  iconStr += "Icon=Happy-SoMuchWin.png\n"
-  iconStr += "Author=Sagar Pandya\n\n"
-  iconStr += "[default]\n";
-  
-  P = RIcons.new.each_emoticon do |r|
-    iconStr += "#{r.cleanpath} #{r.aliases.collect{|a| "[#{a}]"}.join(' ')}\n"
-  end
-  
-  #Write
-  P.dump_icons_to_folder('trollicons-pidgin')
-  Pathname.new('build/trollicons-pidgin/theme').open('w'){|io| io << iconStr}
-end
-
-desc "Builds for Digsby"
-task :build_digsby do
-  puts "\nBuilding for Adium".bold
-  
-  list = "trollicons\n"
-  D = RIcons.new.each_emoticon do |r|
-    r.aliases.each do |a|
-      list += "#{r.cleanpath} [#{a}]\n"
-    end
-  end
-  
-  D.dump_icons_to_folder('trollicons-digsby')
-  Pathname.new('build/trollicons-digsby/emoticons.txt').open('w'){|io| io << list}
-end
-
-desc "Builds for Miranda"
-task :build_miranda do
-  puts "\nBuilding for Miranda".bold
-  
-  string = "Name=Trollicons\n"
-  string += "Description=This is the trollicons pack for Miranda. Find it on github.\n"
-  string += "Icon=Happy-SoMuchWin.png\n"
-  string += "Author=sagargp\n\n"
-  string += "[default]\n"
-  
-  M = RIcons.new.each_emoticon do |r|
-    string += "Smiley = \"#{r.cleanpath}\", 0, \"#{r.aliases.collect{|a| "[#{a}]"}.join(' ')}\n\""
-  end
-  
-  M.dump_icons_to_folder('trollicons-miranda')
-  Pathname.new('build/trollicons-miranda/Trollicons.msl').open('w'){|io| io << string}
-end
-
-desc "Builds for Trillian"
-task :build_trillian do
-  require 'RMagick'
-  require 'builder'
-  
-  puts "\nBuilding for Trillian".bold
-  T = RIcons.new
-    
-  #Adium uses an XML file
-  b = Builder::XmlMarkup.new(:target=>(markup=String.new), :indent=>2)
-  b.comment! "Auto-generated. Run rake build_trillian. github.com/sagargp/trollicons"
-  T.each_emoticon do |r|
-    b.bitmap :name => r.name, :file => "../../stixe/plugins/trollicons-trillian/icons/#{r.cleanpath}"
-  end
-  
-  b.prefs{
-    b.control :name => "emoticons", :type => "emoticons" do
-      #<group text="&wordBasicSmileys;" initial="1">
-  		b.group :text => '&wordBasicSmileys;'.to_sym, :initial => 1 do
-  		  
-        T.each_emoticon do |r|
-          r.aliases.each_with_index do |a, i|
-            # Get image size
-            image = Magick::Image.read( r.to_s ).first
-
-            b.emoticon :text => "[#{a.to_s}]", :button => (i==0 ? "yes" : "") do
-              b.source :name => r.name, :left => "0", :right => "#{image.columns}", :top => "0", :bottom => "#{image.rows+10}"
-            end
-          end
-        end
-      
-      end
-      
-      # Some required stuff
-    	b << "&Emoticon-Extensions;\n"
-    	b << "&iniMenuItemColor;\n"
-    	b << "&iniIconMenuItemSettings;\n"
-    	b.font :name => "selection", :source => 'ttfDefault', :type => '&iniDefaultFontName;'.to_sym, :size => '&iniDefaultFontSize;'.to_sym
-    end
-  }
-  
-  # It also uses a desc.txt file
-  string = "Trollicons emoticon set built on #{Time.now}\nemot"
-  
-  T.dump_icons_to_folder('trollicons-trillian/icons')
-  #binding.pry
-  cp T.files.select{|f| f.aliases.include? 'trollicons'}.first.to_s, "build/trollicons-trillian/emoticon.png" # Header image
-  cp T.files.select{|f| f.aliases.include? 'win'}.first.to_s, "build/trollicons-trillian/preview.png" # Header image
-  Pathname.new('./build/trollicons-trillian/main.xml').open('w'){|io| io << markup}
-  Pathname.new('./build/trollicons-trillian/desc.txt').open('w'){|io| io << string}
 end
 
 class RIcons

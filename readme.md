@@ -8,7 +8,7 @@ __Rage Icons for Adium, Pidgin, Digsby, Miranda, and Trillian__
 ## Authors
 * Sagar Pandya [sagargp@gmail.com](mailto:sagargp@gmail.com)
 * Chris Li [github.com/unregistered](https://github.com/unregistered)
-* Jonathan E. Chen [github.com/wikichen.com](https://github.com/wikichen)
+* Jonathan E. Chen [github.com/wikichen](https://github.com/wikichen)
 
 ## Installation
 Click Downloads to grab the latest version from github.

@@ -28,7 +28,7 @@ end
 
 namespace :build do
   desc "Builds all packages we have support for."
-  task :all => [:adium, :pidgin, :digsby, :miranda, :trillian]
+  task :all => [:adium, :pidgin, :digsby, :miranda, :trillian, :extension]
 
   desc "Builds for Adium on OSX"
   task :adium do
@@ -180,6 +180,20 @@ namespace :build do
     cp T.files.select{|f| f.aliases.include? 'win'}.first.to_s, "build/trollicons-trillian/preview.png" # Header image
     Pathname.new('./build/trollicons-trillian/main.xml').open('w'){|io| io << markup}
     Pathname.new('./build/trollicons-trillian/desc.txt').open('w'){|io| io << string}
+  end
+
+  desc "Builds a Chrome extension/user-script"
+  task :extension do
+  	puts "\nBuilding browser extension".bold
+  	cmd = "cp -r Icons/ extension/trollicons/img";
+  	cmd += " && \"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" --pack-extension=extension/trollicons/ --pack-extension-key=extension/lib/trollicons.pem";
+  	system(cmd);
+  	
+  	puts "\nCleaning up...".bold
+  	
+  	cmd = "mv extension/trollicons.crx build/";
+  	cmd += " && rm -rf extension/trollicons/img";
+  	system(cmd);
   end
 end
 

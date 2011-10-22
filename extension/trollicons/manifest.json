@@ -1,0 +1,9 @@
+{
+	"name": "Trollicons for Chrome",
+	"version": "1.3",
+	"description": "Parses trollicons in Facebook Chat",
+	"content_scripts": [ {
+		"matches": ["*://*.facebook.com/*"],
+		"js": ["jquery.js", "mappings.js", "trollicons.js"]
+	}]
+}

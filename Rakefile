@@ -188,7 +188,13 @@ namespace :build do
   	cmd = "cp -r Icons/ extension/trollicons/img";
   	cmd += " && \"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" --pack-extension=extension/trollicons/ --pack-extension-key=extension/lib/trollicons.pem";
   	system(cmd);
-  	
+  
+	puts "\nBuilding extension Zip file for upload to Chrome website".bold
+	cmd = "cd extension/trollicons"
+	cmd += "&& zip -r ../../build/trollicons.zip *"
+	cmd += "&& cd -"
+	system(cmd);	
+
   	puts "\nCleaning up...".bold
   	
   	cmd = "mv extension/trollicons.crx build/";

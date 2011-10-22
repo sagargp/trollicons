@@ -6,7 +6,7 @@
 	if (/facebook/.test(window.location.href)) {
 		var nodes = {};
 		nodes['div#fbDockChat'] = '.fbChatMessage'; // the docked chat window messages
-		nodes['div#contentArea'] = '.storyContent'; // items in the feeds
+		//nodes['div#contentArea'] = '.storyContent'; // items in the feeds (this is buggy)
 		nodes['div#MessagingMessages'] = '.MessagingMessage'; // chat messages in the inbox
 
 		var imgNode = (function(key, img) {

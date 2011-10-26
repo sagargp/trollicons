@@ -1,6 +1,6 @@
 {
 	"name": "Trollicons for Google Chrome™",
-	"version": "1.5",
+	"version": "1.6",
 	"description": "Parses trollicons in Facebook Chat",
 	"icons": { "16": "icon16.png",
 			   "48": "icon48.png",

@@ -191,7 +191,7 @@ namespace :build do
   
 	puts "\nBuilding extension Zip file for upload to Chrome website".bold
 	cmd = "cd extension/trollicons"
-	cmd += "&& zip -r ../../build/trollicons.zip *"
+	cmd += "&& zip -r ../../build/trollicons-chrome.zip *"
 	cmd += "&& cd -"
 	system(cmd);	
 

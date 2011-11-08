@@ -123,7 +123,7 @@ namespace :build do
     string += "[default]\r\n"
   
     M = RIcons.new.each_emoticon do |r|
-      string += "Smiley = \"#{r.cleanpath}\", 0, \"#{r.aliases.collect{|a| "[#{a}]"}.join(' ')}\r\n\""
+      string += "Smiley = \"#{r.cleanpath}\", 0, \"#{r.aliases.collect{|a| "[#{a}]"}.join(' ')}\"\r\n"
     end
   
     M.dump_icons_to_folder('trollicons-miranda')

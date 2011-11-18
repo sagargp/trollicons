@@ -3,7 +3,7 @@
 __Rage Icons for Adium, Pidgin, Digsby, Miranda, and Trillian__
 
 ## A Graphical Overview
-![Overview](http://i.imgur.com/LntRv.png)
+![Overview](http://i.imgur.com/zJ4Gr.png)
 
 ## Authors
 * Sagar Pandya [sagargp@gmail.com](mailto:sagargp@gmail.com)
@@ -12,6 +12,9 @@ __Rage Icons for Adium, Pidgin, Digsby, Miranda, and Trillian__
 
 ## Installation
 Click Downloads to grab the latest version from github.
+
+### iChat (OS X)
+Unzip and run the package installer.
 
 ### Adium (OS X)
 Double click to unzip. Then, double click the trollicons emoticon pack to install.
@@ -65,6 +68,8 @@ So `Troll/Troll-troll-problem-problem?.png` would compile to
 
 	Name: Troll - Troll
 	Aliases: [troll] [problem] [problem?]
+
+If your package produces directories that should not be distributed, begin the directory name with a `-`, like `-trollicons-ichat`.
 
 ### Adding support for another IM Client
 Create a new task in the `Rakefile`.

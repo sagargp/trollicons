@@ -3,7 +3,7 @@ require 'pathname'
 #require 'pry'
 #require 'RMagick'
 
-task :default => [:help]
+task :default => [:all]
 
 desc "Does rake -T"
 task :help do
@@ -21,14 +21,20 @@ task :all => ['build:all']
 namespace :install do
   desc "Installs for adium on Mac OS X"
   task :adium do
-    `open build/trollicons.AdiumEmoticonset`
+    sh "open build/trollicons.AdiumEmoticonset"
     puts "Restart Adium".red
+  end
+  
+  desc "Installs in iChat.app, requires root"
+  task :ichat do
+    sh "sudo cp -R ./build/-trollicons-ichat/ /Applications/iChat.app/Contents/PlugIns/Standard.smileypack/Contents/Resources/"
+    puts "Restart iChat".red
   end
 end
 
 namespace :build do
   desc "Builds all packages we have support for."
-  task :all => [:adium, :pidgin, :digsby, :miranda, :trillian, :extension]
+  task :all => [:adium, :pidgin, :digsby, :miranda, :trillian, :ichat, :extension]
 
   desc "Builds for Adium on OSX"
   task :adium do
@@ -67,6 +73,65 @@ namespace :build do
   
     A.dump_icons_to_folder('trollicons.AdiumEmoticonset')
     Pathname.new('./build/trollicons.AdiumEmoticonset/Emoticons.plist').open('w'){|io| io << markup}
+  end
+  
+  desc "Builds for iChat"
+  task :ichat do
+    require 'builder'
+  
+    puts "\nBuilding for iChat".bold
+    A = RIcons.new
+    
+    #Adium uses an XML file
+    b = Builder::XmlMarkup.new(:target=>(markup=String.new), :indent=>2)
+    b.comment! "Auto-generated. Run rake build:ichat."
+    b.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8"
+    b.declare! :DOCTYPE, :plist, :PUBLIC, "-//Apple//DTD PLIST 1.0//EN", "http://www.apple.com/DTDs/PropertyList-1.0.dtd"
+    b.plist "version"=>"1.0" do
+      b.dict{
+        b.key "Smileys"
+        b.array{
+          A.each_emoticon do |r|
+            b.dict{
+              b.key "ASCII Representations"
+              b.array{
+                r.aliases.each {|a| b.string "[#{a}]"}
+              }
+              b.key "Image Name"
+              b.string r.cleanpath
+              b.key "Description"
+              b.string r.name
+              b.key "Speech Description"
+              b.string "Trollicon #{r.name}"
+            }
+          end
+        }
+      }
+    end
+  
+    A.dump_icons_to_folder('-trollicons-ichat')    
+    mkdir_p './build/-trollicons-ichat/English.lproj'
+    Pathname.new('./build/-trollicons-ichat/English.lproj/Smileys.plist').open('w'){|io| io << markup}
+    
+    # Make a .pkg file
+    puts "Making a pkg installer".bold
+    cmd = "/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker "
+    cmd += "--root ./build/-trollicons-ichat "
+    cmd += "--out ./build/trollicons-ichat.pkg "
+    cmd += "--install-to /Applications/iChat.app/Contents/PlugIns/Standard.smileypack/Contents/Resources "
+    cmd += "--id com.sagargp.trollicons "
+    cmd += "--title \"Trollicons for iChat\""
+    sh cmd
+    
+    # Distribute the uninstaller
+    puts "Creating uninstaller".bold
+    cmd = "/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker "
+    cmd += "--root ./iChat-uninstaller/Resources "
+    cmd += "--out ./build/trollicons-ichat-uninstaller.pkg "
+    cmd += "--install-to /Applications/iChat.app/Contents/PlugIns/Standard.smileypack/Contents/Resources "
+    cmd += "--id com.sagargp.trollicons-uninstaller "
+    cmd += "--title \"Uninstall Trollicons for iChat\""
+    sh cmd
   end
 
   desc "Builds for Pidgin"
@@ -185,21 +250,21 @@ namespace :build do
   desc "Builds a Chrome extension/user-script"
   task :extension do
   	puts "\nBuilding browser extension".bold
-  	cmd = "cp -r Icons/ extension/trollicons/img";
-  	cmd += " && \"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" --pack-extension=extension/trollicons/ --pack-extension-key=extension/lib/trollicons.pem";
-  	system(cmd);
+  	cmd = "cp -r Icons/ extension/trollicons/img"
+  	cmd += " && \"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" --pack-extension=extension/trollicons/ --pack-extension-key=extension/lib/trollicons.pem"
+  	system cmd
   
-	puts "\nBuilding extension Zip file for upload to Chrome website".bold
-	cmd = "cd extension/trollicons"
-	cmd += "&& zip -r ../../build/trollicons-chrome.zip *"
-	cmd += "&& cd -"
-	system(cmd);	
+	  puts "\nBuilding extension Zip file for upload to Chrome website".bold
+  	cmd = "cd extension/trollicons"
+  	cmd += "&& zip -r ../../build/trollicons-chrome.zip *"
+  	cmd += "&& cd -"
+  	system cmd
 
   	puts "\nCleaning up...".bold
   	
-  	cmd = "mv extension/trollicons.crx build/";
-  	cmd += " && rm -rf extension/trollicons/img";
-  	system(cmd);
+  	cmd = "mv extension/trollicons.crx build/"
+  	cmd += " && rm -rf extension/trollicons/img"
+  	system cmd
   end
 end
 
@@ -222,7 +287,7 @@ task :deploy => [:clean, 'build:all', :dist] do
     gh.upload(
       :repos => repos,
       :file => f.to_s,
-      :description => "#{f.basename} - Auto-uploaded from Rake. See Readme for which file to download."
+      :description => "#{f.basename} - Auto-uploaded from Rake. See Readme for installation instructions."
     )
   end
 end
@@ -230,7 +295,7 @@ end
 desc "Packages all folders in build/ for distribution"
 task :dist do
   mkdir_p 'build'
-  n = Pathname.new('./build').children.select{|f| f.extname != '.zip' and f.directory? }.each do |d| 
+  n = Pathname.new('./build').children.select{|f| f.extname != '.zip' and f.directory? and f.basename.to_s[0] != '-' }.each do |d| 
     Dir.chdir('./build/') do 
       sh "zip -r #{d.basename}.zip #{d.basename}"
     end

@@ -181,14 +181,14 @@ namespace :build do
   task :miranda do
     puts "\nBuilding for Miranda".bold
   
-    string = "Name=Trollicons\n"
-    string += "Description=This is the trollicons pack for Miranda. Find it on github.\n"
-    string += "Icon=Happy-SoMuchWin.png\n"
-    string += "Author=sagargp\n\n"
-    string += "[default]\n"
+    string = "Name=\"Trollicons\"\r\n"
+    string += "Description=\"This is the trollicons pack for Miranda. Find it on github.\"\r\n"
+    string += "Icon=\"Happy-SoMuchWin.png\"\r\n"
+    string += "Author=\"Sagar Pandya\"\r\n\r\n"
+    string += "[default]\r\n"
   
     M = RIcons.new.each_emoticon do |r|
-      string += "Smiley = \"#{r.cleanpath}\", 0, \"#{r.aliases.collect{|a| "[#{a}]"}.join(' ')}\n\""
+      string += "Smiley = \"#{r.cleanpath}\", 0, \"#{r.aliases.collect{|a| "[#{a}]"}.join(' ')}\"\r\n"
     end
   
     M.dump_icons_to_folder('trollicons-miranda')

@@ -308,6 +308,17 @@ task :dist do
   end
 end
 
+desc "Lists all faces and aliases"
+task :doc do
+  D = RIcons.new
+  
+  D.each_emoticon do |r|
+    print "#{r.name} : "
+    r.aliases.each{|a| print "[#{a}]"}
+    print "\n"
+  end
+end
+
 class RIcons
   begin
 	  include Rake::DSL

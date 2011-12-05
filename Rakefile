@@ -268,6 +268,26 @@ namespace :build do
   end
 end
 
+desc "Tweet a message"
+task :tweet => [:clean] do
+  require "rubygems"
+  require "twitter"
+  require "json"
+
+  auth = JSON.parse(File.new("trolliconsAuth.ignore", "r").read)
+  print "Type the message: "
+  STDIN.gets
+  Twitter.configure do |config|
+    config.consumer_key       = auth['consumer_key']
+    config.consumer_secret    = auth['consumer_secret']
+    config.oauth_token        = auth['oauth_token']
+    config.oauth_token_secret = auth['oauth_token_secret']
+  end
+  
+  client = Twitter::Client.new
+  client.update $_
+end
+
 desc "Deploys all archives to github"
 task :deploy => [:clean, 'build:all', :dist] do
   require 'net/github-upload'
@@ -290,6 +310,7 @@ task :deploy => [:clean, 'build:all', :dist] do
       :description => "#{f.basename} - Auto-uploaded from Rake. See Readme for installation instructions."
     )
   end
+
 end
 
 desc "Packages all folders in build/ for distribution"
@@ -392,6 +413,7 @@ class RIcons
   end
   
 end
+
 class RIcon < Pathname
   attr_accessor :file, :name, :aliases, :namespace, :cleanpath
   def initialize(pathname)

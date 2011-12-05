@@ -269,7 +269,7 @@ namespace :build do
 end
 
 desc "Tweet a message"
-task :tweet => [:clean] do
+task :tweet do
   require "rubygems"
   require "twitter"
   require "json"

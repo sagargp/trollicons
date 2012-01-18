@@ -1,12 +1,22 @@
 {
-	"name": "Trollicons for Google Chrome™",
-	"version": "1.6",
-	"description": "Parses trollicons in Facebook Chat",
-	"icons": { "16": "icon16.png",
-			   "48": "icon48.png",
-			  "128": "icon128.png" },
-	"content_scripts": [ {
-		"matches": ["*://*.facebook.com/*"],
-		"js": ["jquery.js", "mappings.js", "trollicons.js"]
-	}]
+  "name": "Trollicons for Google Chrome™",
+  "version": "1.7",
+  "description": "Parses trollicons in Facebook Chat",
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.facebook.com/*"
+      ],
+      "js": [
+        "jquery.js",
+        "mappings.js",
+        "trollicons.js"
+      ]
+    }
+  ]
 }

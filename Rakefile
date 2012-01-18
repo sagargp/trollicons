@@ -249,7 +249,20 @@ namespace :build do
 
   desc "Builds a Chrome extension/user-script"
   task :extension do
+    require "json"
+
   	puts "\nBuilding browser extension".bold
+    # open extension/trollicons/manifest.json
+    # add 0.1 to the version number
+    manifestFile = File.new("extension/trollicons/manifest.json", "r")
+    manifest = JSON.parse(manifestFile.read)
+    manifest['version'] = String((Float(manifest['version']) + 0.1).round(1))
+    manifestFile.close()
+
+    manifestFile = File.new("extension/trollicons/manifest.json", "w")
+    manifestFile.write(JSON.pretty_generate(manifest))
+    manifestFile.close()
+
   	cmd = "cp -r Icons/ extension/trollicons/img"
   	cmd += " && \"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" --pack-extension=extension/trollicons/ --pack-extension-key=extension/lib/trollicons.pem"
   	system cmd
@@ -300,16 +313,22 @@ task :deploy => [:clean, 'build:all', :dist] do
     :token => token
   )
 
-  gh.delete_all repos
+  stats = File.new("stats", "a")
+  gh.list_files(repos).each do |file|
+    row = String(file[:name]) + ", " + String(Time.now.tv_sec) + ", " + String(file[:downloads]) + "\n"
+    stats.write(row)
+  end
 
   Pathname.new('./build').each_child.select{|c| c.extname == '.zip'}.each do |f|
     puts "Uploading #{f.to_s} to github"
-    gh.upload(
+    gh.replace(
       :repos => repos,
       :file => f.to_s,
       :description => "#{f.basename} - Auto-uploaded from Rake. See Readme for installation instructions."
     )
   end
+
+  print "\nNOTE: Chrome extension requires manual upload!\n"
 
 end
 

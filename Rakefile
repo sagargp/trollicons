@@ -30,11 +30,16 @@ namespace :install do
     sh "sudo cp -R ./build/-trollicons-ichat/ /Applications/iChat.app/Contents/PlugIns/Standard.smileypack/Contents/Resources/"
     puts "Restart iChat".red
   end
+  
+  desc "Installs for Colloquy on Mac OS X"
+  task :colloquy do
+    sh "cp -R ./build/trollicons.colloquyEmoticons ~/Library/Application\ Support/Colloquy/Emoticons/"
+  end
 end
 
 namespace :build do
   desc "Builds all packages we have support for."
-  task :all => [:adium, :pidgin, :digsby, :miranda, :trillian, :ichat, :extension]
+  task :all => [:adium, :colloquy, :pidgin, :digsby, :miranda, :trillian, :ichat, :extension]
 
   desc "Builds for Adium on OSX"
   task :adium do
@@ -82,8 +87,30 @@ namespace :build do
     puts "\nBuilding for Colloquy".bold
     A = RIcons.new
     
-    #Colloquy uses an XML file
-    b = Builder::XmlMarkup.new(:target=>(markup=String.new), :indent=>2)
+    #Colloquy uses an XML file Info.plist
+    b = Builder::XmlMarkup.new(:target=>(infomarkup=String.new), :indent=>2)
+    b.comment! "Auto-generated. Run rake build:colloquy."
+    b.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8"
+    b.declare! :DOCTYPE, :plist, :PUBLIC, "-//Apple//DTD PLIST 1.0//EN", "http://www.apple.com/DTDs/PropertyList-1.0.dtd"
+    b.plist "version"=>"1.0" do
+      b.dict{
+        b.key "CFBundleDevelopmentRegion"
+        b.string "English"
+        b.key "CFBundleGetInfoString"
+        b.string "Trollicons Colloquy Chat Emoticons"
+        b.key "CFBundleIdentifier"
+        b.string "cc.javelin.colloquy.emoticons.trollicons"
+        b.key "CFBundleInfoDictionaryVersion"
+        b.string "6.0"
+        b.key "CFBundleName"
+        b.string "Trollicons"
+        b.key "CFBundlePackageType"
+        b.string "coEm"
+      }
+    end
+    
+    #Colloquy uses an XML file menu.plist
+    b = Builder::XmlMarkup.new(:target=>(menumarkup=String.new), :indent=>2)
     b.comment! "Auto-generated. Run rake build:colloquy."
     b.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8"
     b.declare! :DOCTYPE, :plist, :PUBLIC, "-//Apple//DTD PLIST 1.0//EN", "http://www.apple.com/DTDs/PropertyList-1.0.dtd"
@@ -94,16 +121,42 @@ namespace :build do
             b.key "image"                
             b.string r.cleanpath
             b.key "insert"
-            r.aliases.fetch(0) {|a| b.string "[#{a}]" }
+            b.string "[" + r.aliases.first + "]"
             b.key "name"
             b.string r.name              
           }
         end
       }
     end
+    
+    #Colloquy uses an XML file emoticons.plist
+    b = Builder::XmlMarkup.new(:target=>(emoticonsmarkup=String.new), :indent=>2)
+    b.comment! "Auto-generated. Run rake build:colloquy."
+    b.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8"
+    b.declare! :DOCTYPE, :plist, :PUBLIC, "-//Apple//DTD PLIST 1.0//EN", "http://www.apple.com/DTDs/PropertyList-1.0.dtd"
+    b.plist "version"=>"1.0" do
+      b.dict{
+        A.each_emoticon do |r|
+          b.key r.aliases.first
+          b.array{
+             r.aliases.each {|a| b.string "[#{a}]" }             
+          }
+        end
+      }
+    end
+    
+    #Colloquy uses a CSS file emoticons.css
+    css = ".emoticon samp { display: none; }\n"
+    css += ".emoticon:after { vertical-align: -25%; }\n"
+    A.each_emoticon do |r|
+      css += ".emoticon." + r.aliases.first + ":after { content: url( \"" + r.cleanpath + "\" ); }\n"
+    end
   
     A.dump_icons_to_folder('trollicons.colloquyEmoticons/Contents/Resources')
-    Pathname.new('./build/trollicons.colloquyEmoticons/Contents/Resources/menu.plist').open('w'){|io| io << markup}
+    Pathname.new('./build/trollicons.colloquyEmoticons/Contents/Info.plist').open('w'){|io| io << infomarkup}
+    Pathname.new('./build/trollicons.colloquyEmoticons/Contents/Resources/menu.plist').open('w'){|io| io << menumarkup}
+    Pathname.new('./build/trollicons.colloquyEmoticons/Contents/Resources/emoticons.plist').open('w'){|io| io << emoticonsmarkup}
+    Pathname.new('./build/trollicons.colloquyEmoticons/Contents/Resources/emoticons.css').open('w'){|io| io << css}
   end
   
   desc "Builds for iChat"
@@ -113,7 +166,7 @@ namespace :build do
     puts "\nBuilding for iChat".bold
     A = RIcons.new
     
-    #Adium uses an XML file
+    #iChat uses an XML file
     b = Builder::XmlMarkup.new(:target=>(markup=String.new), :indent=>2)
     b.comment! "Auto-generated. Run rake build:ichat."
     b.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8"
@@ -234,7 +287,7 @@ namespace :build do
     puts "\nBuilding for Trillian".bold
     T = RIcons.new
     
-    #Adium uses an XML file
+    #Trillian uses an XML file
     b = Builder::XmlMarkup.new(:target=>(markup=String.new), :indent=>2)
     b.comment! "Auto-generated. Run rake build:trillian. github.com/sagargp/trollicons"
     T.each_emoticon do |r|

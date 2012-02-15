@@ -75,6 +75,37 @@ namespace :build do
     Pathname.new('./build/trollicons.AdiumEmoticonset/Emoticons.plist').open('w'){|io| io << markup}
   end
   
+  desc "Builds for Colloquy"
+  task :colloquy do
+    require 'builder'
+  
+    puts "\nBuilding for Colloquy".bold
+    A = RIcons.new
+    
+    #Colloquy uses an XML file
+    b = Builder::XmlMarkup.new(:target=>(markup=String.new), :indent=>2)
+    b.comment! "Auto-generated. Run rake build:colloquy."
+    b.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8"
+    b.declare! :DOCTYPE, :plist, :PUBLIC, "-//Apple//DTD PLIST 1.0//EN", "http://www.apple.com/DTDs/PropertyList-1.0.dtd"
+    b.plist "version"=>"1.0" do
+      b.array{
+        A.each_emoticon do |r|
+          b.dict{
+            b.key "image"                
+            b.string r.cleanpath
+            b.key "insert"
+            r.aliases.fetch(0) {|a| b.string "[#{a}]" }
+            b.key "name"
+            b.string r.name              
+          }
+        end
+      }
+    end
+  
+    A.dump_icons_to_folder('trollicons.colloquyEmoticons/Contents/Resources')
+    Pathname.new('./build/trollicons.colloquyEmoticons/Contents/Resources/menu.plist').open('w'){|io| io << markup}
+  end
+  
   desc "Builds for iChat"
   task :ichat do
     require 'builder'

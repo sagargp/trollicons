@@ -33,7 +33,7 @@ namespace :install do
   
   desc "Installs for Colloquy on Mac OS X"
   task :colloquy do
-    sh "cp -R ./build/trollicons.colloquyEmoticons ~/Library/Application\ Support/Colloquy/Emoticons/"
+    sh "cp -R ./build/trollicons.colloquyEmoticons ~/Library/Application\\ Support/Colloquy/Emoticons/"
     puts "Restart Colloquy".red
   end
 end

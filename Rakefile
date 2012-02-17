@@ -298,25 +298,24 @@ namespace :build do
   
     b.prefs{
       b.control :name => "emoticons", :type => "emoticons" do
-        #<group text="&wordBasicSmileys;" initial="1">
-    		b.group :text => '&wordBasicSmileys;'.to_sym, :initial => 0 do
   		    
-          ri.each_category do |cat|
-            b.group :text => "#{cat.name};".to_sym, :initial => 0 do
-              cat.files.each do |r|
-                r.aliases.each_with_index do |a, i|
-                  # Get image size
-                  image = Magick::Image.read( r.to_s ).first
+        ri.each_category do |cat|
+          
+          b.group :text => "#{cat.name};".to_sym, :initial => 0 do
+            cat.files.each do |r|
+              r.aliases.each_with_index do |a, i|
+                # Get image size
+                image = Magick::Image.read( r.to_s ).first
 
-                  b.emoticon :text => "[#{a.to_s}]", :button => (i==0 ? "yes" : "") do
-                    b.source :name => r.name, :left => "0", :right => "#{image.columns}", :top => "0", :bottom => "#{image.rows+10}"
-                  end
+                b.emoticon :text => "[#{a.to_s}]", :button => (i==0 ? "yes" : "") do
+                  b.source :name => r.name, :left => "0", :right => "#{image.columns}", :top => "0", :bottom => "#{image.rows+10}"
                 end
               end
             end
-          end   
+          end
+          
+        end   
              
-        end
       
         # Some required stuff
       	b << "&Emoticon-Extensions;\n"
@@ -333,6 +332,10 @@ namespace :build do
     #binding.pry
     cp ri.files.select{|f| f.aliases.include? 'trollicons'}.first.to_s, "build/trollicons-trillian/emoticon.png" # Header image
     cp ri.files.select{|f| f.aliases.include? 'win'}.first.to_s, "build/trollicons-trillian/preview.png" # Header image
+    preview = Magick::Image.read("build/trollicons-trillian/preview.png")
+    preview[0].write("build/trollicons-trillian/preview.bmp")
+    rm "build/trollicons-trillian/preview.png"
+    
     Pathname.new('./build/trollicons-trillian/main.xml').open('w'){|io| io << markup}
     Pathname.new('./build/trollicons-trillian/desc.txt').open('w'){|io| io << string}
   end
@@ -545,6 +548,7 @@ class RCategory
     @path = dir
     @name = @path.basename
     @files = get_files
+    puts "Warning: empty category \"#{@name}\"".yellow if @files.empty?
   end
   
   def get_files
@@ -587,6 +591,9 @@ class String
   end
   def green
     return "\e[32m#{self}\e[0m"
+  end
+  def yellow
+    return "\e[33m#{self}\e[0m"
   end
 end
 

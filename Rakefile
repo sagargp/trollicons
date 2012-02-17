@@ -1,7 +1,6 @@
 # Maintainer: Chris -- https://github.com/unregistered
 require 'pathname'
-#require 'pry'
-#require 'RMagick'
+require 'pry' if ENV["DEBUG"]
 
 task :default => [:all]
 
@@ -19,7 +18,7 @@ desc "Alias for build:all"
 task :all => ['build:all']
 
 namespace :install do
-  desc "Installs for adium on Mac OS X"
+  desc "Installs for Adium on Mac OS X"
   task :adium do
     sh "open build/trollicons.AdiumEmoticonset"
     puts "Restart Adium".red
@@ -47,7 +46,7 @@ namespace :build do
     require 'builder'
   
     puts "\nBuilding for Adium".bold
-    A = RIcons.new
+    ri = RIcons.new
     
     #Adium uses an XML file
     b = Builder::XmlMarkup.new(:target=>(markup=String.new), :indent=>2)
@@ -60,7 +59,7 @@ namespace :build do
         b.real "1.3"
         b.key "Emoticons"
         b.dict{
-          A.each_emoticon do |r|
+          ri.each_emoticon do |r|
                             
             b.key r.cleanpath
             b.dict{
@@ -77,7 +76,7 @@ namespace :build do
       }
     end
   
-    A.dump_icons_to_folder('trollicons.AdiumEmoticonset')
+    ri.dump_icons_to_folder('trollicons.AdiumEmoticonset')
     Pathname.new('./build/trollicons.AdiumEmoticonset/Emoticons.plist').open('w'){|io| io << markup}
   end
   
@@ -86,7 +85,7 @@ namespace :build do
     require 'builder'
   
     puts "\nBuilding for Colloquy".bold
-    A = RIcons.new
+    ri = RIcons.new
     
     #Colloquy uses an XML file Info.plist
     b = Builder::XmlMarkup.new(:target=>(infomarkup=String.new), :indent=>2)
@@ -117,7 +116,7 @@ namespace :build do
     b.declare! :DOCTYPE, :plist, :PUBLIC, "-//Apple//DTD PLIST 1.0//EN", "http://www.apple.com/DTDs/PropertyList-1.0.dtd"
     b.plist "version"=>"1.0" do
       b.array{
-        A.each_emoticon do |r|
+        ri.each_emoticon do |r|
           b.dict{
             b.key "image"                
             b.string r.cleanpath
@@ -137,7 +136,7 @@ namespace :build do
     b.declare! :DOCTYPE, :plist, :PUBLIC, "-//Apple//DTD PLIST 1.0//EN", "http://www.apple.com/DTDs/PropertyList-1.0.dtd"
     b.plist "version"=>"1.0" do
       b.dict{
-        A.each_emoticon do |r|
+        ri.each_emoticon do |r|
           b.key r.aliases.first
           b.array{
              r.aliases.each {|a| b.string "[#{a}]" }             
@@ -149,11 +148,11 @@ namespace :build do
     #Colloquy uses a CSS file emoticons.css
     css = ".emoticon samp { display: none; }\n"
     css += ".emoticon:after { vertical-align: -25%; }\n"
-    A.each_emoticon do |r|
+    ri.each_emoticon do |r|
       css += ".emoticon." + r.aliases.first + ":after { content: url( \"" + r.cleanpath + "\" ); }\n"
     end
   
-    A.dump_icons_to_folder('trollicons.colloquyEmoticons/Contents/Resources')
+    ri.dump_icons_to_folder('trollicons.colloquyEmoticons/Contents/Resources')
     Pathname.new('./build/trollicons.colloquyEmoticons/Contents/Info.plist').open('w'){|io| io << infomarkup}
     Pathname.new('./build/trollicons.colloquyEmoticons/Contents/Resources/menu.plist').open('w'){|io| io << menumarkup}
     Pathname.new('./build/trollicons.colloquyEmoticons/Contents/Resources/emoticons.plist').open('w'){|io| io << emoticonsmarkup}
@@ -165,7 +164,9 @@ namespace :build do
     require 'builder'
   
     puts "\nBuilding for iChat".bold
-    A = RIcons.new
+    next unless file_exists '/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker'
+    
+    ri = RIcons.new
     
     #iChat uses an XML file
     b = Builder::XmlMarkup.new(:target=>(markup=String.new), :indent=>2)
@@ -176,7 +177,7 @@ namespace :build do
       b.dict{
         b.key "Smileys"
         b.array{
-          A.each_emoticon do |r|
+          ri.each_emoticon do |r|
             b.dict{
               b.key "ASCII Representations"
               b.array{
@@ -194,7 +195,7 @@ namespace :build do
       }
     end
   
-    A.dump_icons_to_folder('-trollicons-ichat')    
+    ri.dump_icons_to_folder('-trollicons-ichat')    
     mkdir_p './build/-trollicons-ichat/English.lproj'
     Pathname.new('./build/-trollicons-ichat/English.lproj/Smileys.plist').open('w'){|io| io << markup}
     
@@ -238,12 +239,12 @@ namespace :build do
     iconStr += "Author=Sagar Pandya\n\n"
     iconStr += "[default]\n";
   
-    P = RIcons.new.each_emoticon do |r|
+    ri = RIcons.new.each_emoticon do |r|
       iconStr += "#{r.cleanpath} #{r.aliases.collect{|a| "[#{a}]"}.join(' ')}\n"
     end
   
     #Write
-    P.dump_icons_to_folder('trollicons-pidgin')
+    ri.dump_icons_to_folder('trollicons-pidgin')
     Pathname.new('build/trollicons-pidgin/theme').open('w'){|io| io << iconStr}
   end
 
@@ -252,13 +253,13 @@ namespace :build do
     puts "\nBuilding for Adium".bold
   
     list = "trollicons\n"
-    D = RIcons.new.each_emoticon do |r|
+    ri = RIcons.new.each_emoticon do |r|
       r.aliases.each do |a|
         list += "#{r.cleanpath} [#{a}]\n"
       end
     end
   
-    D.dump_icons_to_folder('trollicons-digsby')
+    ri.dump_icons_to_folder('trollicons-digsby')
     Pathname.new('build/trollicons-digsby/emoticons.txt').open('w'){|io| io << list}
   end
 
@@ -272,11 +273,11 @@ namespace :build do
     string += "Author=\"Sagar Pandya\"\r\n\r\n"
     string += "[default]\r\n"
   
-    M = RIcons.new.each_emoticon do |r|
+    ri = RIcons.new.each_emoticon do |r|
       string += "Smiley = \"#{r.cleanpath}\", 0, \"#{r.aliases.collect{|a| "[#{a}]"}.join(' ')}\"\r\n"
     end
   
-    M.dump_icons_to_folder('trollicons-miranda')
+    ri.dump_icons_to_folder('trollicons-miranda')
     Pathname.new('build/trollicons-miranda/Trollicons.msl').open('w'){|io| io << string}
   end
 
@@ -286,31 +287,35 @@ namespace :build do
     require 'builder'
   
     puts "\nBuilding for Trillian".bold
-    T = RIcons.new
+    ri = RIcons.new
     
     #Trillian uses an XML file
     b = Builder::XmlMarkup.new(:target=>(markup=String.new), :indent=>2)
     b.comment! "Auto-generated. Run rake build:trillian. github.com/sagargp/trollicons"
-    T.each_emoticon do |r|
+    ri.each_emoticon do |r|
       b.bitmap :name => r.name, :file => "../../stixe/plugins/trollicons-trillian/icons/#{r.cleanpath}"
     end
   
     b.prefs{
       b.control :name => "emoticons", :type => "emoticons" do
         #<group text="&wordBasicSmileys;" initial="1">
-    		b.group :text => '&wordBasicSmileys;'.to_sym, :initial => 1 do
-  		  
-          T.each_emoticon do |r|
-            r.aliases.each_with_index do |a, i|
-              # Get image size
-              image = Magick::Image.read( r.to_s ).first
+    		b.group :text => '&wordBasicSmileys;'.to_sym, :initial => 0 do
+  		    
+          ri.each_category do |cat|
+            b.group :text => "#{cat.name};".to_sym, :initial => 0 do
+              cat.files.each do |r|
+                r.aliases.each_with_index do |a, i|
+                  # Get image size
+                  image = Magick::Image.read( r.to_s ).first
 
-              b.emoticon :text => "[#{a.to_s}]", :button => (i==0 ? "yes" : "") do
-                b.source :name => r.name, :left => "0", :right => "#{image.columns}", :top => "0", :bottom => "#{image.rows+10}"
+                  b.emoticon :text => "[#{a.to_s}]", :button => (i==0 ? "yes" : "") do
+                    b.source :name => r.name, :left => "0", :right => "#{image.columns}", :top => "0", :bottom => "#{image.rows+10}"
+                  end
+                end
               end
             end
-          end
-      
+          end   
+             
         end
       
         # Some required stuff
@@ -324,10 +329,10 @@ namespace :build do
     # It also uses a desc.txt file
     string = "Trollicons emoticon set built on #{Time.now}\nemot"
   
-    T.dump_icons_to_folder('trollicons-trillian/icons')
+    ri.dump_icons_to_folder('trollicons-trillian/icons')
     #binding.pry
-    cp T.files.select{|f| f.aliases.include? 'trollicons'}.first.to_s, "build/trollicons-trillian/emoticon.png" # Header image
-    cp T.files.select{|f| f.aliases.include? 'win'}.first.to_s, "build/trollicons-trillian/preview.png" # Header image
+    cp ri.files.select{|f| f.aliases.include? 'trollicons'}.first.to_s, "build/trollicons-trillian/emoticon.png" # Header image
+    cp ri.files.select{|f| f.aliases.include? 'win'}.first.to_s, "build/trollicons-trillian/preview.png" # Header image
     Pathname.new('./build/trollicons-trillian/main.xml').open('w'){|io| io << markup}
     Pathname.new('./build/trollicons-trillian/desc.txt').open('w'){|io| io << string}
   end
@@ -335,8 +340,10 @@ namespace :build do
   desc "Builds a Chrome extension/user-script"
   task :extension do
     require "json"
-
-  	puts "\nBuilding browser extension".bold
+    
+  	puts "\nBuilding Chrome extension".bold
+    next unless file_exists './extension/lib/trollicons.pem'
+    
     # open extension/trollicons/manifest.json
     # add 0.1 to the version number
     manifestFile = File.new("extension/trollicons/manifest.json", "r")
@@ -435,12 +442,15 @@ end
 
 desc "Lists all faces and aliases"
 task :doc do
-  D = RIcons.new
+  ri = RIcons.new
   
-  D.each_emoticon do |r|
-    print "#{r.name} : "
-    r.aliases.each{|a| print "[#{a}]"}
-    print "\n"
+  ri.each_category do |c|
+    puts "#{c.name}".bold
+    c.files.each do |r|
+      print "\t#{r.name} : "
+      r.aliases.each{|a| print "[#{a}]"}
+      print "\n"
+    end
   end
 end
 
@@ -454,6 +464,10 @@ class RIcons
   def initialize
     @files = self.get_files
     @count = files.count
+  end
+  
+  def get_categories
+    Pathname.new("Icons").children.select{|d| d.directory?}.map{|d| RCategory.new(d)}
   end
   
   def get_files(directory="Icons")
@@ -479,6 +493,13 @@ class RIcons
     files
   end
   
+  def each_category
+    get_categories.each do |c|
+      yield c if block_given?
+    end
+    self
+  end
+    
   def each_emoticon
     files.each do |f|    
       yield f if block_given?
@@ -518,6 +539,19 @@ class RIcons
   
 end
 
+class RCategory
+  attr_accessor :name, :path, :files
+  def initialize(dir)
+    @path = dir
+    @name = @path.basename
+    @files = get_files
+  end
+  
+  def get_files
+    @path.children.select{|f| f.extname == '.png'}.map{|f| RIcon.new(f).init}
+  end
+end
+
 class RIcon < Pathname
   attr_accessor :file, :name, :aliases, :namespace, :cleanpath
   def initialize(pathname)
@@ -554,4 +588,12 @@ class String
   def green
     return "\e[32m#{self}\e[0m"
   end
+end
+
+def file_exists file
+  t = Pathname.new(file).file?
+  unless t
+    puts "#{file} not found. Skipping...".red
+  end
+  t
 end

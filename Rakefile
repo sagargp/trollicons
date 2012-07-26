@@ -396,37 +396,6 @@ task :tweet do
   client.update $_
 end
 
-desc "Deploys all archives to github"
-task :deploy => [:clean, 'build:all', :dist] do
-  require 'net/github-upload'
-
-  login = `git config github.user`.chomp  # your login for github
-  token = `git config github.token`.chomp # your token for github
-  repos = 'sagargp/trollicons'            # your repos name (like 'taberareloo')
-  gh = Net::GitHub::Upload.new(
-    :login => login,
-    :token => token
-  )
-
-  stats = File.new("stats", "a")
-  gh.list_files(repos).each do |file|
-    row = String(file[:name]) + ", " + String(Time.now.tv_sec) + ", " + String(file[:downloads]) + "\n"
-    stats.write(row)
-  end
-
-  Pathname.new('./build').each_child.select{|c| c.extname == '.zip'}.each do |f|
-    puts "Uploading #{f.to_s} to github"
-    gh.replace(
-      :repos => repos,
-      :file => f.to_s,
-      :description => "#{f.basename} - Auto-uploaded from Rake. See Readme for installation instructions."
-    )
-  end
-
-  print "\nNOTE: Chrome extension requires manual upload!\n"
-
-end
-
 desc "Packages all folders in build/ for distribution"
 task :dist do
   mkdir_p 'build'
@@ -441,6 +410,34 @@ task :dist do
     puts "No packages found. Perhaps you'd like to build some?".red
     Rake::Task["help"].execute
   end
+end
+
+def setup_uploader(root=Dir.pwd)
+  require 'github_downloads'
+  uploader = GithubDownloads::Uploader.new
+  uploader.authorize
+  uploader
+end
+
+def upload_file(uploader, filename, description, file)
+  print "Uploading #{filename}..."
+  if uploader.upload_file(filename, description, file)
+    puts "Success"
+  else
+    puts "Failure"
+  end
+end
+
+desc "Deploys all archives to GitHub"
+task :deploy => [:clean, 'build:all', :dist] do
+  uploader = setup_uploader
+  Pathname.new('./build').each_child.select{|c| c.extname == '.zip'}.each do |f|
+    puts "Uploading #{f.to_s} to github"
+    dsc = "#{f.basename} - Auto-uploaded from Rake. See Readme for installation instructions."
+    upload_file(uploader, f.to_s, dsc, f.to_s)
+  end
+  
+  print "\nNOTE: Chrome extension requires manual upload!\n"
 end
 
 desc "Lists all faces and aliases"
@@ -604,3 +601,4 @@ def file_exists file
   end
   t
 end
+

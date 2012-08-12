@@ -49,12 +49,15 @@ Delete or rename `C:\Program Files\Digsby\res\emoticons\default` and unzip troll
 ## Building
 ### To checkout source:
 	git clone git://github.com/sagargp/trollicons.git
-	
+
+### Installing depedencies:
+	bundle install
+
 ### Using Rake:
 You may have to install rake.
 
-	(sudo) gem install rake builder pry
-	
+	(sudo) gem install rake bundle
+		
 If that doesn't work you may have to install ruby, which is out of this readme's scope.
 	
 Type `rake -T` to see available tasks. 

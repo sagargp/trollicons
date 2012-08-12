@@ -2,6 +2,8 @@
 require 'pathname'
 require 'pry' if ENV["DEBUG"]
 
+PACKAGEMAKER_PATH = '/Applications/Xcode.app/Contents/Applications/PackageMaker.app/Contents/MacOS/PackageMaker'
+
 task :default => [:all]
 
 desc "Does rake -T"
@@ -164,7 +166,7 @@ namespace :build do
     require 'builder'
   
     puts "\nBuilding for iChat".bold
-    next unless file_exists '/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker'
+    next unless file_exists PACKAGEMAKER_PATH
     
     ri = RIcons.new
     
@@ -201,7 +203,7 @@ namespace :build do
     
     # Make a .pkg file
     puts "Making a pkg installer".bold
-    cmd = "/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker "
+    cmd = PACKAGEMAKER_PATH + " "
     cmd += "--root ./build/-trollicons-ichat "
     cmd += "--out ./build/trollicons-ichat.pkg "
     cmd += "--install-to /Applications/iChat.app/Contents/PlugIns/Standard.smileypack/Contents/Resources "
@@ -211,7 +213,7 @@ namespace :build do
     
     # Distribute the uninstaller
     puts "Creating uninstaller".bold
-    cmd = "/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker "
+    cmd = PACKAGEMAKER_PATH + " "
     cmd += "--root ./iChat-uninstaller/Resources "
     cmd += "--out ./build/trollicons-ichat-uninstaller.pkg "
     cmd += "--install-to /Applications/iChat.app/Contents/PlugIns/Standard.smileypack/Contents/Resources "
@@ -219,6 +221,68 @@ namespace :build do
     cmd += "--title \"Uninstall Trollicons for iChat\""
     sh cmd
   end
+  
+  desc "Builds for Messages.app"
+  task :imessages do
+    require 'builder'
+  
+    puts "\nBuilding for Messages.app".bold
+    next unless file_exists PACKAGEMAKER_PATH
+
+    ri = RIcons.new
+    
+    #iChat uses an XML file
+    b = Builder::XmlMarkup.new(:target=>(markup=String.new), :indent=>2)
+    b.comment! "Auto-generated. Run rake build:ichat."
+    b.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8"
+    b.declare! :DOCTYPE, :plist, :PUBLIC, "-//Apple//DTD PLIST 1.0//EN", "http://www.apple.com/DTDs/PropertyList-1.0.dtd"
+    b.plist "version"=>"1.0" do
+      b.dict{
+        b.key "Smileys"
+        b.array{
+          ri.each_emoticon do |r|
+            b.dict{
+              b.key "ASCII Representations"
+              b.array{
+                r.aliases.each {|a| b.string "[#{a}]"}
+              }
+              b.key "Image Name"
+              b.string r.cleanpath
+              b.key "Description"
+              b.string r.name
+              b.key "Speech Description"
+              b.string "Trollicon #{r.name}"
+            }
+          end
+        }
+      }
+    end
+  
+    ri.dump_icons_to_folder('-trollicons-ichat')    
+    mkdir_p './build/-trollicons-ichat/English.lproj'
+    Pathname.new('./build/-trollicons-ichat/English.lproj/Smileys.plist').open('w'){|io| io << markup}
+    
+    # Make a .pkg file
+    puts "Making a pkg installer".bold
+    cmd = PACKAGEMAKER_PATH + " "
+    cmd += "--root ./build/-trollicons-ichat "
+    cmd += "--out ./build/trollicons-ichat.pkg "
+    cmd += "--install-to /Applications/iChat.app/Contents/PlugIns/Standard.smileypack/Contents/Resources "
+    cmd += "--id com.sagargp.trollicons "
+    cmd += "--title \"Trollicons for iChat\""
+    sh cmd
+    
+    # Distribute the uninstaller
+    puts "Creating uninstaller".bold
+    cmd = PACKAGEMAKER_PATH + " "
+    cmd += "--root ./iChat-uninstaller/Resources "
+    cmd += "--out ./build/trollicons-ichat-uninstaller.pkg "
+    cmd += "--install-to /Applications/iChat.app/Contents/PlugIns/Standard.smileypack/Contents/Resources "
+    cmd += "--id com.sagargp.trollicons-uninstaller "
+    cmd += "--title \"Uninstall Trollicons for iChat\""
+    sh cmd
+  end
+
 
   desc "Builds for Pidgin"
   task :pidgin do
@@ -434,7 +498,7 @@ task :deploy => [:clean, 'build:all', :dist] do
   Pathname.new('./build').each_child.select{|c| c.extname == '.zip'}.each do |f|
     puts "Uploading #{f.to_s} to github"
     dsc = "#{f.basename} - Auto-uploaded from Rake. See Readme for installation instructions."
-    upload_file(uploader, f.to_s, dsc, f.to_s)
+    upload_file(uploader, f.basename.to_s, dsc, f.to_s)
   end
   
   print "\nNOTE: Chrome extension requires manual upload!\n"

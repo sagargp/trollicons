@@ -539,7 +539,7 @@ class RIcons
     files = []
     Pathname.new(directory).children.each do |f|
       if f.directory? # WE NEED TO GO DEEPER
-        files = files | Pathname.new(f).children.select{|f| f.extname == '.png' }.map{|f| RIcon.new(f).init } # Merge arrays
+        files = files | Pathname.new(f).children.select{|f| (f.extname == '.png' || f.extname == '.gif') }.map{|f| RIcon.new(f).init } # Merge arrays
       else
         files << RIcon.new(f).init if f.extname == '.png'
       end

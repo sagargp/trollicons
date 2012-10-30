@@ -438,6 +438,37 @@ namespace :build do
   	cmd += " && rm -rf extension/trollicons/img"
   	system cmd
   end
+  
+  desc "Builds for Psi"
+  task :psi do
+    require 'builder'
+    
+    puts "\nBuilding for Psi".bold
+    ri = RIcons.new
+
+    #Psi uses an XML file
+    b = Builder::XmlMarkup.new(:target=>(markup=String.new), :indent=>2)
+    b.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8"
+    b.icondef do
+      b.meta{
+        b.name "Trollicons"
+        b.version "1.3"
+        b.description "This is the trollicons pack for Psi. Find it on github."
+        b.home "https://github.com/sagargp/trollicons"
+        b.author "Sagar Pandya", :email=>"sagargp@gmail.com"
+        b.creation "#{Time.now.year}-#{Time.now.month}-#{Time.now.day}"
+      }
+      ri.each_emoticon do |r|
+        b.icon{
+          r.aliases.each {|a| b.text "[#{a}]"}
+          b.object r.cleanpath, :mime => "image/png"
+        }
+      end
+    end
+  
+    ri.dump_icons_to_folder('trollicons-psi')
+    Pathname.new('build/trollicons-psi/icondef.xml').open('w'){|io| io << markup}
+  end
 end
 
 desc "Tweet a message"

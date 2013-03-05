@@ -2,6 +2,8 @@
 require 'pathname'
 require 'pry' if ENV["DEBUG"]
 
+PACKAGEMAKER_PATH = '/Applications/Xcode.app/Contents/Applications/PackageMaker.app/Contents/MacOS/PackageMaker'
+
 task :default => [:all]
 
 desc "Does rake -T"
@@ -164,7 +166,7 @@ namespace :build do
     require 'builder'
   
     puts "\nBuilding for iChat".bold
-    next unless file_exists '/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker'
+    next unless file_exists PACKAGEMAKER_PATH
     
     ri = RIcons.new
     
@@ -201,7 +203,7 @@ namespace :build do
     
     # Make a .pkg file
     puts "Making a pkg installer".bold
-    cmd = "/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker "
+    cmd = PACKAGEMAKER_PATH + " "
     cmd += "--root ./build/-trollicons-ichat "
     cmd += "--out ./build/trollicons-ichat.pkg "
     cmd += "--install-to /Applications/iChat.app/Contents/PlugIns/Standard.smileypack/Contents/Resources "
@@ -211,7 +213,7 @@ namespace :build do
     
     # Distribute the uninstaller
     puts "Creating uninstaller".bold
-    cmd = "/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker "
+    cmd = PACKAGEMAKER_PATH + " "
     cmd += "--root ./iChat-uninstaller/Resources "
     cmd += "--out ./build/trollicons-ichat-uninstaller.pkg "
     cmd += "--install-to /Applications/iChat.app/Contents/PlugIns/Standard.smileypack/Contents/Resources "
@@ -219,6 +221,68 @@ namespace :build do
     cmd += "--title \"Uninstall Trollicons for iChat\""
     sh cmd
   end
+  
+  desc "Builds for Messages.app"
+  task :imessages do
+    require 'builder'
+  
+    puts "\nBuilding for Messages.app".bold
+    next unless file_exists PACKAGEMAKER_PATH
+
+    ri = RIcons.new
+    
+    #iChat uses an XML file
+    b = Builder::XmlMarkup.new(:target=>(markup=String.new), :indent=>2)
+    b.comment! "Auto-generated. Run rake build:ichat."
+    b.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8"
+    b.declare! :DOCTYPE, :plist, :PUBLIC, "-//Apple//DTD PLIST 1.0//EN", "http://www.apple.com/DTDs/PropertyList-1.0.dtd"
+    b.plist "version"=>"1.0" do
+      b.dict{
+        b.key "Smileys"
+        b.array{
+          ri.each_emoticon do |r|
+            b.dict{
+              b.key "ASCII Representations"
+              b.array{
+                r.aliases.each {|a| b.string "[#{a}]"}
+              }
+              b.key "Image Name"
+              b.string r.cleanpath
+              b.key "Description"
+              b.string r.name
+              b.key "Speech Description"
+              b.string "Trollicon #{r.name}"
+            }
+          end
+        }
+      }
+    end
+  
+    ri.dump_icons_to_folder('-trollicons-ichat')    
+    mkdir_p './build/-trollicons-ichat/English.lproj'
+    Pathname.new('./build/-trollicons-ichat/English.lproj/Smileys.plist').open('w'){|io| io << markup}
+    
+    # Make a .pkg file
+    puts "Making a pkg installer".bold
+    cmd = PACKAGEMAKER_PATH + " "
+    cmd += "--root ./build/-trollicons-ichat "
+    cmd += "--out ./build/trollicons-ichat.pkg "
+    cmd += "--install-to /Applications/iChat.app/Contents/PlugIns/Standard.smileypack/Contents/Resources "
+    cmd += "--id com.sagargp.trollicons "
+    cmd += "--title \"Trollicons for iChat\""
+    sh cmd
+    
+    # Distribute the uninstaller
+    puts "Creating uninstaller".bold
+    cmd = PACKAGEMAKER_PATH + " "
+    cmd += "--root ./iChat-uninstaller/Resources "
+    cmd += "--out ./build/trollicons-ichat-uninstaller.pkg "
+    cmd += "--install-to /Applications/iChat.app/Contents/PlugIns/Standard.smileypack/Contents/Resources "
+    cmd += "--id com.sagargp.trollicons-uninstaller "
+    cmd += "--title \"Uninstall Trollicons for iChat\""
+    sh cmd
+  end
+
 
   desc "Builds for Pidgin"
   task :pidgin do
@@ -374,6 +438,37 @@ namespace :build do
   	cmd += " && rm -rf extension/trollicons/img"
   	system cmd
   end
+  
+  desc "Builds for Psi"
+  task :psi do
+    require 'builder'
+    
+    puts "\nBuilding for Psi".bold
+    ri = RIcons.new
+
+    #Psi uses an XML file
+    b = Builder::XmlMarkup.new(:target=>(markup=String.new), :indent=>2)
+    b.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8"
+    b.icondef do
+      b.meta{
+        b.name "Trollicons"
+        b.version "1.3"
+        b.description "This is the trollicons pack for Psi. Find it on github."
+        b.home "https://github.com/sagargp/trollicons"
+        b.author "Sagar Pandya", :email=>"sagargp@gmail.com"
+        b.creation "#{Time.now.year}-#{Time.now.month}-#{Time.now.day}"
+      }
+      ri.each_emoticon do |r|
+        b.icon{
+          r.aliases.each {|a| b.text "[#{a}]"}
+          b.object r.cleanpath, :mime => "image/png"
+        }
+      end
+    end
+  
+    ri.dump_icons_to_folder('trollicons-psi')
+    Pathname.new('build/trollicons-psi/icondef.xml').open('w'){|io| io << markup}
+  end
 end
 
 desc "Tweet a message"
@@ -396,37 +491,6 @@ task :tweet do
   client.update $_
 end
 
-desc "Deploys all archives to github"
-task :deploy => [:clean, 'build:all', :dist] do
-  require 'net/github-upload'
-
-  login = `git config github.user`.chomp  # your login for github
-  token = `git config github.token`.chomp # your token for github
-  repos = 'sagargp/trollicons'            # your repos name (like 'taberareloo')
-  gh = Net::GitHub::Upload.new(
-    :login => login,
-    :token => token
-  )
-
-  stats = File.new("stats", "a")
-  gh.list_files(repos).each do |file|
-    row = String(file[:name]) + ", " + String(Time.now.tv_sec) + ", " + String(file[:downloads]) + "\n"
-    stats.write(row)
-  end
-
-  Pathname.new('./build').each_child.select{|c| c.extname == '.zip'}.each do |f|
-    puts "Uploading #{f.to_s} to github"
-    gh.replace(
-      :repos => repos,
-      :file => f.to_s,
-      :description => "#{f.basename} - Auto-uploaded from Rake. See Readme for installation instructions."
-    )
-  end
-
-  print "\nNOTE: Chrome extension requires manual upload!\n"
-
-end
-
 desc "Packages all folders in build/ for distribution"
 task :dist do
   mkdir_p 'build'
@@ -441,6 +505,34 @@ task :dist do
     puts "No packages found. Perhaps you'd like to build some?".red
     Rake::Task["help"].execute
   end
+end
+
+def setup_uploader(root=Dir.pwd)
+  require 'github_downloads'
+  uploader = GithubDownloads::Uploader.new
+  uploader.authorize
+  uploader
+end
+
+def upload_file(uploader, filename, description, file)
+  print "Uploading #{filename}..."
+  if uploader.upload_file(filename, description, file)
+    puts "Success"
+  else
+    puts "Failure"
+  end
+end
+
+desc "Deploys all archives to GitHub"
+task :deploy => [:clean, 'build:all', :dist] do
+  uploader = setup_uploader
+  Pathname.new('./build').each_child.select{|c| c.extname == '.zip'}.each do |f|
+    puts "Uploading #{f.to_s} to github"
+    dsc = "#{f.basename} - Auto-uploaded from Rake. See Readme for installation instructions."
+    upload_file(uploader, f.basename.to_s, dsc, f.to_s)
+  end
+  
+  print "\nNOTE: Chrome extension requires manual upload!\n"
 end
 
 desc "Lists all faces and aliases"
@@ -604,3 +696,4 @@ def file_exists file
   end
   t
 end
+

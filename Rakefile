@@ -41,7 +41,7 @@ end
 
 namespace :build do
   desc "Builds all packages we have support for."
-  task :all => [:adium, :colloquy, :pidgin, :digsby, :gajim, :miranda, :trillian, :ichat, :extension]
+  task :all => [:adium, :colloquy, :pidgin, :digsby, :gajim, :miranda, :trillian, :ichat, :extension, :psi]
 
   desc "Builds for Adium on OSX"
   task :adium do

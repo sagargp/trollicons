@@ -3,15 +3,15 @@
 __Rage Icons for Adium, Pidgin, Digsby, Miranda, iChat, Trillian, Psi, Colloquy, and Gajim__
 
 #### Downloads
-* [https://github.com/unregistered/trollicon-binaries/blob/master/trollicons.AdiumEmoticonset.zip](Adium)
-* [https://github.com/unregistered/trollicon-binaries/blob/master/trollicons.colloquyEmoticons.zip](Colloquy)
-* [https://github.com/unregistered/trollicon-binaries/blob/master/trollicons-digsby.zip](Digsby)
-* [https://github.com/unregistered/trollicon-binaries/blob/master/trollicons-gajim.zip](Gajim)
-* [https://github.com/unregistered/trollicon-binaries/blob/master/trollicons-ichat.pkg.zip](iChat) ([https://github.com/unregistered/trollicon-binaries/blob/master/trollicons-ichat-uninstaller.pkg.zip](Uninstaller))
-* [https://github.com/unregistered/trollicon-binaries/blob/master/trollicons-miranda.zip](Miranda)
-* [https://github.com/unregistered/trollicon-binaries/blob/master/trollicons-pidgin.zip](Pidgin)
-* [https://github.com/unregistered/trollicon-binaries/blob/master/trollicons-psi.zip](Psi)
-* [https://github.com/unregistered/trollicon-binaries/blob/master/trollicons-trillian.zip](Trillian)
+* [Adium](https://github.com/unregistered/trollicon-binaries/blob/master/trollicons.AdiumEmoticonset.zip)
+* [Colloquy](https://github.com/unregistered/trollicon-binaries/blob/master/trollicons.colloquyEmoticons.zip)
+* [Digsby](https://github.com/unregistered/trollicon-binaries/blob/master/trollicons-digsby.zip)
+* [Gajim](https://github.com/unregistered/trollicon-binaries/blob/master/trollicons-gajim.zip)
+* [iChat](https://github.com/unregistered/trollicon-binaries/blob/master/trollicons-ichat.pkg.zip) ([Uninstaller](https://github.com/unregistered/trollicon-binaries/blob/master/trollicons-ichat-uninstaller.pkg.zip))
+* [Miranda](https://github.com/unregistered/trollicon-binaries/blob/master/trollicons-miranda.zip)
+* [Pidgin](https://github.com/unregistered/trollicon-binaries/blob/master/trollicons-pidgin.zip)
+* [Psi](https://github.com/unregistered/trollicon-binaries/blob/master/trollicons-psi.zip)
+* [Trillian](https://github.com/unregistered/trollicon-binaries/blob/master/trollicons-trillian.zip)
 
 
 ## A Graphical Overview

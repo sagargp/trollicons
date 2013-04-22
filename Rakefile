@@ -537,11 +537,13 @@ end
 
 desc "Deploys all archives to GitHub"
 task :deploy => :submodule do
-  Pathname.new('./build').each_child.select{|c| c.extname == '.zip'}.each do |f|
-    mv f.to_s, "../trollicon-binaries/#{f.basename}.zip"
+  Dir.chdir('./build') do
+    Pathname.new('.').each_child.select{|c| c.extname == '.zip'}.each do |f|
+      mv f.to_s, "../trollicon-binaries/#{f.basename}"
+    end
   end
   
-  print "\nNOTE: Chrome extension requires manual upload!\n"
+  print "\nNOTE: Chrome extension requires manual upload!\n".red
 end
 
 desc "Lists all faces and aliases"

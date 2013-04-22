@@ -513,12 +513,17 @@ task :tweet do
   client.update $_
 end
 
+desc "Checks out submodule of binaries"
+task :submodule do
+  
+end
+
 desc "Packages all folders in build/ for distribution"
 task :dist do
   mkdir_p 'build'
   n = Pathname.new('./build').children.select{|f| f.extname != '.zip' and f.directory? and f.basename.to_s[0] != '-' }.each do |d| 
     Dir.chdir('./build/') do 
-      sh "zip -r #{d.basename}.zip #{d.basename}"
+      sh "zip -r ../trollicon-binaries/#{d.basename}.zip #{d.basename}"
     end
   end
   if n.count > 0

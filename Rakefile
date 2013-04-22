@@ -515,7 +515,8 @@ end
 
 desc "Checks out submodule of binaries"
 task :submodule do
-  
+  sh "git submodule init"
+  sh "git submodule update"
 end
 
 desc "Packages all folders in build/ for distribution"
@@ -523,7 +524,7 @@ task :dist do
   mkdir_p 'build'
   n = Pathname.new('./build').children.select{|f| f.extname != '.zip' and f.directory? and f.basename.to_s[0] != '-' }.each do |d| 
     Dir.chdir('./build/') do 
-      sh "zip -r ../trollicon-binaries/#{d.basename}.zip #{d.basename}"
+      sh "zip -r #{d.basename}.zip #{d.basename}"
     end
   end
   if n.count > 0
@@ -534,29 +535,10 @@ task :dist do
   end
 end
 
-def setup_uploader(root=Dir.pwd)
-  require 'github_downloads'
-  uploader = GithubDownloads::Uploader.new
-  uploader.authorize
-  uploader
-end
-
-def upload_file(uploader, filename, description, file)
-  print "Uploading #{filename}..."
-  if uploader.upload_file(filename, description, file)
-    puts "Success"
-  else
-    puts "Failure"
-  end
-end
-
 desc "Deploys all archives to GitHub"
-task :deploy => [:clean, 'build:all', :dist] do
-  uploader = setup_uploader
+task :deploy => :submodule do
   Pathname.new('./build').each_child.select{|c| c.extname == '.zip'}.each do |f|
-    puts "Uploading #{f.to_s} to github"
-    dsc = "#{f.basename} - Auto-uploaded from Rake. See Readme for installation instructions."
-    upload_file(uploader, f.basename.to_s, dsc, f.to_s)
+    mv f.to_s, "../trollicon-binaries/#{f.basename}.zip"
   end
   
   print "\nNOTE: Chrome extension requires manual upload!\n"

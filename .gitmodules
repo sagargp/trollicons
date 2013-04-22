@@ -1,0 +1,3 @@
+[submodule "trollicon-binaries"]
+	path = trollicon-binaries
+	url = git@github.com:unregistered/trollicon-binaries.git

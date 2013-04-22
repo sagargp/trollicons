@@ -5,4 +5,3 @@ source "https://rubygems.org"
 gem 'pry'
 gem 'quick_magick'
 gem 'builder'
-gem 'github_downloads'

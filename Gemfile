@@ -3,6 +3,6 @@ source "https://rubygems.org"
 
 # gem "rails"
 gem 'pry'
-gem 'rmagick'
+gem 'mini_magick'
 gem 'builder'
 gem 'github_downloads'

@@ -347,7 +347,7 @@ namespace :build do
 
   desc "Builds for Trillian"
   task :trillian do
-    require 'RMagick'
+    require 'mini_magick'
     require 'builder'
   
     puts "\nBuilding for Trillian".bold
@@ -369,10 +369,10 @@ namespace :build do
             cat.files.each do |r|
               r.aliases.each_with_index do |a, i|
                 # Get image size
-                image = Magick::Image.read( r.to_s ).first
+                image = MiniMagick::Image.open( r.to_s )
 
                 b.emoticon :text => "[#{a.to_s}]", :button => (i==0 ? "yes" : "") do
-                  b.source :name => r.name, :left => "0", :right => "#{image.columns}", :top => "0", :bottom => "#{image.rows+10}"
+                  b.source :name => r.name, :left => "0", :right => "#{image[:width]}", :top => "0", :bottom => "#{image[:height]+10}"
                 end
               end
             end
@@ -396,8 +396,8 @@ namespace :build do
     #binding.pry
     cp ri.files.select{|f| f.aliases.include? 'trollicons'}.first.to_s, "build/trollicons-trillian/emoticon.png" # Header image
     cp ri.files.select{|f| f.aliases.include? 'win'}.first.to_s, "build/trollicons-trillian/preview.png" # Header image
-    preview = Magick::Image.read("build/trollicons-trillian/preview.png")
-    preview[0].write("build/trollicons-trillian/preview.bmp")
+    preview = MiniMagick::Image.open("build/trollicons-trillian/preview.png")
+    preview.write "build/trollicons-trillian/preview.bmp"
     rm "build/trollicons-trillian/preview.png"
     
     Pathname.new('./build/trollicons-trillian/main.xml').open('w'){|io| io << markup}

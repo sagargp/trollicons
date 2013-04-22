@@ -41,7 +41,7 @@ end
 
 namespace :build do
   desc "Builds all packages we have support for."
-  task :all => [:adium, :colloquy, :pidgin, :digsby, :miranda, :trillian, :ichat, :extension]
+  task :all => [:adium, :colloquy, :pidgin, :digsby, :gajim, :miranda, :trillian, :ichat, :extension]
 
   desc "Builds for Adium on OSX"
   task :adium do
@@ -325,6 +325,28 @@ namespace :build do
   
     ri.dump_icons_to_folder('trollicons-digsby')
     Pathname.new('build/trollicons-digsby/emoticons.txt').open('w'){|io| io << list}
+  end
+
+  desc "Builds for Gajim"
+  task :gajim do
+    puts "\nBuilding for Gajim".bold
+  
+    string = "#Name=\"Trollicons\"\n"
+    string += "#Description=\"This is the trollicons pack for Gajim. Find it on github.\"\n"
+    string += "#Icon=\"Happy-SoMuchWin.png\"\n"
+    string += "#Author=\"Sagar Pandya\"\n\n"
+    string += "#[default]\n"
+    
+    string += "emoticons = {"
+    list = []
+    ri = RIcons.new.each_emoticon do |r|
+      list.push("'#{r.cleanpath}': ['#{r.aliases.collect{|a| "[#{a}]"}.join('\', \'')}']")
+    end
+    string += list.join(",\n")
+    string += "}"
+    
+    ri.dump_icons_to_folder('trollicons-gajim')
+    Pathname.new('build/trollicons-gajim/emoticons.py').open('w'){|io| io << string}
   end
 
   desc "Builds for Miranda"

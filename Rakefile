@@ -41,7 +41,7 @@ end
 
 namespace :build do
   desc "Builds all packages we have support for."
-  task :all => [:adium, :colloquy, :pidgin, :digsby, :miranda, :trillian, :ichat, :extension]
+  task :all => [:adium, :colloquy, :pidgin, :digsby, :gajim, :miranda, :trillian, :ichat, :extension, :psi]
 
   desc "Builds for Adium on OSX"
   task :adium do
@@ -327,6 +327,28 @@ namespace :build do
     Pathname.new('build/trollicons-digsby/emoticons.txt').open('w'){|io| io << list}
   end
 
+  desc "Builds for Gajim"
+  task :gajim do
+    puts "\nBuilding for Gajim".bold
+  
+    string = "#Name=\"Trollicons\"\n"
+    string += "#Description=\"This is the trollicons pack for Gajim. Find it on github.\"\n"
+    string += "#Icon=\"Happy-SoMuchWin.png\"\n"
+    string += "#Author=\"Sagar Pandya\"\n\n"
+    string += "#[default]\n"
+    
+    string += "emoticons = {"
+    list = []
+    ri = RIcons.new.each_emoticon do |r|
+      list.push("'#{r.cleanpath}': ['#{r.aliases.collect{|a| "[#{a}]"}.join('\', \'')}']")
+    end
+    string += list.join(",\n")
+    string += "}"
+    
+    ri.dump_icons_to_folder('trollicons-gajim')
+    Pathname.new('build/trollicons-gajim/emoticons.py').open('w'){|io| io << string}
+  end
+
   desc "Builds for Miranda"
   task :miranda do
     puts "\nBuilding for Miranda".bold
@@ -347,7 +369,7 @@ namespace :build do
 
   desc "Builds for Trillian"
   task :trillian do
-    require 'RMagick'
+    require 'quick_magick'
     require 'builder'
   
     puts "\nBuilding for Trillian".bold
@@ -369,10 +391,10 @@ namespace :build do
             cat.files.each do |r|
               r.aliases.each_with_index do |a, i|
                 # Get image size
-                image = Magick::Image.read( r.to_s ).first
+                image = QuickMagick::Image.open( r.to_s ).first
 
                 b.emoticon :text => "[#{a.to_s}]", :button => (i==0 ? "yes" : "") do
-                  b.source :name => r.name, :left => "0", :right => "#{image.columns}", :top => "0", :bottom => "#{image.rows+10}"
+                  b.source :name => r.name, :left => "0", :right => "#{image.width}", :top => "0", :bottom => "#{image.height+10}"
                 end
               end
             end
@@ -396,8 +418,8 @@ namespace :build do
     #binding.pry
     cp ri.files.select{|f| f.aliases.include? 'trollicons'}.first.to_s, "build/trollicons-trillian/emoticon.png" # Header image
     cp ri.files.select{|f| f.aliases.include? 'win'}.first.to_s, "build/trollicons-trillian/preview.png" # Header image
-    preview = Magick::Image.read("build/trollicons-trillian/preview.png")
-    preview[0].write("build/trollicons-trillian/preview.bmp")
+    preview = QuickMagick::Image.open("build/trollicons-trillian/preview.png").first
+    preview.save "build/trollicons-trillian/preview.bmp"
     rm "build/trollicons-trillian/preview.png"
     
     Pathname.new('./build/trollicons-trillian/main.xml').open('w'){|io| io << markup}
@@ -491,6 +513,12 @@ task :tweet do
   client.update $_
 end
 
+desc "Checks out submodule of binaries"
+task :submodule do
+  sh "git submodule init"
+  sh "git submodule update"
+end
+
 desc "Packages all folders in build/ for distribution"
 task :dist do
   mkdir_p 'build'
@@ -507,32 +535,15 @@ task :dist do
   end
 end
 
-def setup_uploader(root=Dir.pwd)
-  require 'github_downloads'
-  uploader = GithubDownloads::Uploader.new
-  uploader.authorize
-  uploader
-end
-
-def upload_file(uploader, filename, description, file)
-  print "Uploading #{filename}..."
-  if uploader.upload_file(filename, description, file)
-    puts "Success"
-  else
-    puts "Failure"
-  end
-end
-
 desc "Deploys all archives to GitHub"
-task :deploy => [:clean, 'build:all', :dist] do
-  uploader = setup_uploader
-  Pathname.new('./build').each_child.select{|c| c.extname == '.zip'}.each do |f|
-    puts "Uploading #{f.to_s} to github"
-    dsc = "#{f.basename} - Auto-uploaded from Rake. See Readme for installation instructions."
-    upload_file(uploader, f.basename.to_s, dsc, f.to_s)
+task :deploy => :submodule do
+  Dir.chdir('./build') do
+    Pathname.new('.').each_child.select{|c| c.extname == '.zip'}.each do |f|
+      mv f.to_s, "../trollicon-binaries/#{f.basename}"
+    end
   end
   
-  print "\nNOTE: Chrome extension requires manual upload!\n"
+  print "\nNOTE: Chrome extension requires manual upload!\n".red
 end
 
 desc "Lists all faces and aliases"

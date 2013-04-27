@@ -33,10 +33,10 @@ GEM
       coderay (~> 1.0.5)
       method_source (~> 0.8)
       slop (~> 3.3.1)
+    quick_magick (0.8.0)
     rack (1.4.1)
     rest-client (1.6.7)
       mime-types (>= 1.16)
-    rmagick (2.13.1)
     slop (3.3.2)
 
 PLATFORMS
@@ -46,4 +46,4 @@ DEPENDENCIES
   builder
   github_downloads
   pry
-  rmagick
+  quick_magick

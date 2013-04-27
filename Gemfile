@@ -3,6 +3,5 @@ source "https://rubygems.org"
 
 # gem "rails"
 gem 'pry'
-gem 'rmagick'
+gem 'quick_magick'
 gem 'builder'
-gem 'github_downloads'

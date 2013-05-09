@@ -1,6 +1,18 @@
 # Trollicons
 
-__Rage Icons for Adium, Pidgin, Digsby, Miranda, and Trillian__
+__Rage Icons for Adium, Pidgin, Digsby, Miranda, iChat, Trillian, Psi, Colloquy, and Gajim__
+
+#### Downloads
+* [Adium](https://github.com/unregistered/trollicon-binaries/blob/master/trollicons.AdiumEmoticonset.zip?raw=true)
+* [Colloquy](https://github.com/unregistered/trollicon-binaries/blob/master/trollicons.colloquyEmoticons.zip?raw=true)
+* [Digsby](https://github.com/unregistered/trollicon-binaries/blob/master/trollicons-digsby.zip?raw=true)
+* [Gajim](https://github.com/unregistered/trollicon-binaries/blob/master/trollicons-gajim.zip?raw=true)
+* [iChat](https://github.com/unregistered/trollicon-binaries/blob/master/trollicons-ichat.pkg.zip?raw=true) ([Uninstaller](https://github.com/unregistered/trollicon-binaries/blob/master/trollicons-ichat-uninstaller.pkg.zip?raw=true))
+* [Miranda](https://github.com/unregistered/trollicon-binaries/blob/master/trollicons-miranda.zip?raw=true)
+* [Pidgin](https://github.com/unregistered/trollicon-binaries/blob/master/trollicons-pidgin.zip?raw=true)
+* [Psi](https://github.com/unregistered/trollicon-binaries/blob/master/trollicons-psi.zip?raw=true)
+* [Trillian](https://github.com/unregistered/trollicon-binaries/blob/master/trollicons-trillian.zip?raw=true)
+
 
 ## A Graphical Overview
 ![Overview](http://i.imgur.com/zJ4Gr.png)

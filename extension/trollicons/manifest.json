@@ -1,4 +1,6 @@
 {
+  "manifest_version": 2,
+
   "name": "Trollicons for Google Chrome™",
   "version": "2.9",
   "description": "Parses trollicons in Facebook Chat",
@@ -18,5 +20,6 @@
         "trollicons.js"
       ]
     }
-  ]
+  ],
+  "web_accessible_resources": ["img/*"]
 }

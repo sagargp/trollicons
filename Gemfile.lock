@@ -3,40 +3,12 @@ GEM
   specs:
     builder (3.0.0)
     coderay (1.0.7)
-    faraday (0.8.1)
-      multipart-post (~> 1.1)
-    github_api (0.6.4)
-      faraday (~> 0.8.1)
-      hashie (~> 1.2.0)
-      multi_json (~> 1.3)
-      nokogiri (~> 1.5.2)
-      oauth2
-    github_downloads (0.1.3)
-      github_api (~> 0.6)
-      rest-client (~> 1.6)
-    hashie (1.2.0)
-    httpauth (0.1)
-    jwt (0.1.5)
-      multi_json (>= 1.0)
     method_source (0.8)
-    mime-types (1.19)
-    multi_json (1.3.6)
-    multipart-post (1.1.5)
-    nokogiri (1.5.5)
-    oauth2 (0.8.0)
-      faraday (~> 0.8)
-      httpauth (~> 0.1)
-      jwt (~> 0.1.4)
-      multi_json (~> 1.0)
-      rack (~> 1.2)
     pry (0.9.10)
       coderay (~> 1.0.5)
       method_source (~> 0.8)
       slop (~> 3.3.1)
     quick_magick (0.8.0)
-    rack (1.4.1)
-    rest-client (1.6.7)
-      mime-types (>= 1.16)
     slop (3.3.2)
 
 PLATFORMS
@@ -44,6 +16,5 @@ PLATFORMS
 
 DEPENDENCIES
   builder
-  github_downloads
   pry
   quick_magick

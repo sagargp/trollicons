@@ -81,7 +81,7 @@ namespace :build do
     ri.dump_icons_to_folder('trollicons.AdiumEmoticonset')
     Pathname.new('./build/trollicons.AdiumEmoticonset/Emoticons.plist').open('w'){|io| io << markup}
   end
-  
+
   desc "Builds for Colloquy"
   task :colloquy do
     require 'builder'

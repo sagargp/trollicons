@@ -1,0 +1,20 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    builder (3.0.0)
+    coderay (1.0.7)
+    method_source (0.8)
+    pry (0.9.10)
+      coderay (~> 1.0.5)
+      method_source (~> 0.8)
+      slop (~> 3.3.1)
+    quick_magick (0.8.0)
+    slop (3.3.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  builder
+  pry
+  quick_magick

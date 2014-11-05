@@ -166,13 +166,8 @@ namespace :build do
     require 'builder'
 
     puts "\nBuilding for iChat".bold
-<<<<<<< HEAD
     next unless file_exists '/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker'
 
-=======
-    next unless file_exists PACKAGEMAKER_PATH
-    
->>>>>>> e7d43119d119f2885367518b78b6d7e5594de2e9
     ri = RIcons.new
 
     #iChat uses an XML file
@@ -226,16 +221,16 @@ namespace :build do
     cmd += "--title \"Uninstall Trollicons for iChat\""
     sh cmd
   end
-  
+
   desc "Builds for Messages.app"
   task :imessages do
     require 'builder'
-  
+
     puts "\nBuilding for Messages.app".bold
     next unless file_exists PACKAGEMAKER_PATH
 
     ri = RIcons.new
-    
+
     #iChat uses an XML file
     b = Builder::XmlMarkup.new(:target=>(markup=String.new), :indent=>2)
     b.comment! "Auto-generated. Run rake build:ichat."
@@ -262,11 +257,11 @@ namespace :build do
         }
       }
     end
-  
-    ri.dump_icons_to_folder('-trollicons-ichat')    
+
+    ri.dump_icons_to_folder('-trollicons-ichat')
     mkdir_p './build/-trollicons-ichat/English.lproj'
     Pathname.new('./build/-trollicons-ichat/English.lproj/Smileys.plist').open('w'){|io| io << markup}
-    
+
     # Make a .pkg file
     puts "Making a pkg installer".bold
     cmd = PACKAGEMAKER_PATH + " "
@@ -276,7 +271,7 @@ namespace :build do
     cmd += "--id com.sagargp.trollicons "
     cmd += "--title \"Trollicons for iChat\""
     sh cmd
-    
+
     # Distribute the uninstaller
     puts "Creating uninstaller".bold
     cmd = PACKAGEMAKER_PATH + " "
@@ -335,13 +330,13 @@ namespace :build do
   desc "Builds for Gajim"
   task :gajim do
     puts "\nBuilding for Gajim".bold
-  
+
     string = "#Name=\"Trollicons\"\n"
     string += "#Description=\"This is the trollicons pack for Gajim. Find it on github.\"\n"
     string += "#Icon=\"Happy-SoMuchWin.png\"\n"
     string += "#Author=\"Sagar Pandya\"\n\n"
     string += "#[default]\n"
-    
+
     string += "emoticons = {"
     list = []
     ri = RIcons.new.each_emoticon do |r|
@@ -349,7 +344,7 @@ namespace :build do
     end
     string += list.join(",\n")
     string += "}"
-    
+
     ri.dump_icons_to_folder('trollicons-gajim')
     Pathname.new('build/trollicons-gajim/emoticons.py').open('w'){|io| io << string}
   end
@@ -465,11 +460,11 @@ namespace :build do
   	cmd += " && rm -rf extension/trollicons/img"
   	system cmd
   end
-  
+
   desc "Builds for Psi"
   task :psi do
     require 'builder'
-    
+
     puts "\nBuilding for Psi".bold
     ri = RIcons.new
 
@@ -492,7 +487,7 @@ namespace :build do
         }
       end
     end
-  
+
     ri.dump_icons_to_folder('trollicons-psi')
     Pathname.new('build/trollicons-psi/icondef.xml').open('w'){|io| io << markup}
   end
@@ -547,13 +542,8 @@ task :deploy => :submodule do
       mv f.to_s, "../trollicon-binaries/#{f.basename}"
     end
   end
-<<<<<<< HEAD
 
-  print "\nNOTE: Chrome extension requires manual upload!\n"
-=======
-  
   print "\nNOTE: Chrome extension requires manual upload!\n".red
->>>>>>> e7d43119d119f2885367518b78b6d7e5594de2e9
 end
 
 desc "Lists all faces and aliases"
